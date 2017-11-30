@@ -1,0 +1,37 @@
+influxdbservice:
+  communication:
+    messaging:
+      rabbit:
+        queue: q.influxdb_service
+    influx:
+      url: http://localhost:8086
+      username: admin
+      password: admin
+
+logging:
+  file: logs/influxdb-service.log
+
+server:
+    port: "${port:8080}"
+
+spring:
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+management:
+  security:
+    enabled: false

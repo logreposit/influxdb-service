@@ -36,7 +36,7 @@ public class RabbitMessageSenderImpl implements RabbitMessageSender
         String routingKey = UUID.randomUUID().toString();
         String payload = this.serializeMessageForAMQPDelivery(message);
 
-        logger.info("Sending message to exchange '{}' with routing key '{}': {}", exchange, routingKey, LoggingUtils.serializeForLoggingWithDefault(message));
+        logger.info("Sending message to exchange '{}' with routing key '{}': {}", exchange, routingKey, LoggingUtils.serialize(message));
 
         this.rabbitTemplate.convertAndSend(exchange, routingKey, payload);
     }

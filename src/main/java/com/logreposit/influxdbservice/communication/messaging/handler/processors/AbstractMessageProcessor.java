@@ -26,7 +26,7 @@ public abstract class AbstractMessageProcessor<T> implements MessageProcessor
         {
             T payload = this.objectMapper.reader().forType(clazz).readValue(message.getPayload());
 
-            logger.info("Successfully deserialized Message Payload into {} instance: {}", clazz.toString(), LoggingUtils.serializeForLoggingWithDefault(payload));
+            logger.info("Successfully deserialized Message Payload into {} instance: {}", clazz.toString(), LoggingUtils.serialize(payload));
 
             return payload;
         }

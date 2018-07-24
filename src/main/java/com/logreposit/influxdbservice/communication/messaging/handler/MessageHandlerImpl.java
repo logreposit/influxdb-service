@@ -29,7 +29,7 @@ public class MessageHandlerImpl implements MessageHandler
     @Override
     public void handleMessage(Message message) throws MessagingException
     {
-        logger.info("Retrieved message: {}", LoggingUtils.serializeForLoggingWithDefault(message));
+        logger.info("Retrieved message: {}", LoggingUtils.serialize(message));
 
         checkIfMessageIsValidOrThrowNotRetryableException(message);
 

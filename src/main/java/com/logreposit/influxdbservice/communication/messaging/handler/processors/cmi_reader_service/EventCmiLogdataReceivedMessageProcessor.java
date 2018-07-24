@@ -39,7 +39,7 @@ public class EventCmiLogdataReceivedMessageProcessor extends AbstractMessageProc
         logger.info("Retrieved CmiLogData for Organization '{}' and Device '{}': {}",
                 organizationId,
                 deviceId,
-                LoggingUtils.serializeForLoggingWithDefault(cmiLogData)
+                LoggingUtils.serialize(cmiLogData)
         );
 
         try

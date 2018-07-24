@@ -21,7 +21,7 @@ public class MessageErrorHandlerImpl implements MessageErrorHandler
     private static final Logger logger = LoggerFactory.getLogger(MessageErrorHandlerImpl.class);
 
     private static final String MESSAGE_ERROR_COUNT_HEADER_KEY = "x-error-count";
-    private static final String ERROR_EXCHANGE_NAME            = "x_error";
+    private static final String ERROR_EXCHANGE_NAME            = "error.x";
 
     private final RabbitMessageSender messageSender;
     private final RetryStrategy       retryStrategy;

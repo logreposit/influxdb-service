@@ -36,7 +36,7 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
     }
 
     @Override
-    @RabbitListener(queuesToDeclare = @Queue("${influxdbservice.communication.messaging.rabbit.queue}"))
+    @RabbitListener(queuesToDeclare = @Queue(value = "${influxdbservice.communication.messaging.rabbit.queue}", durable = "true"))
     public void listen(org.springframework.amqp.core.Message amqpMessage)
     {
         try

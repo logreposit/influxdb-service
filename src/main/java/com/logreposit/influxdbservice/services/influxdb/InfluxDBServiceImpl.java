@@ -54,6 +54,8 @@ public class InfluxDBServiceImpl implements InfluxDBService
 
     private void createDatabaseForDeviceIfNotExistent(String deviceId)
     {
+        // TODO DoM: refactor deprecated describeDatabases(), createDatabase()
+
         if (!this.influxDB.describeDatabases().contains(deviceId))
         {
             logger.info("There's no database for device with ID '{}' existent yet. Creating a new one.", deviceId);

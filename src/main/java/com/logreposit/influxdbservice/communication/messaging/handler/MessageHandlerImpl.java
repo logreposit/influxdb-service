@@ -5,7 +5,7 @@ import com.logreposit.influxdbservice.communication.messaging.common.MessageType
 import com.logreposit.influxdbservice.communication.messaging.exceptions.MessagingException;
 import com.logreposit.influxdbservice.communication.messaging.exceptions.NotRetryableMessagingException;
 import com.logreposit.influxdbservice.communication.messaging.exceptions.RetryableMessagingException;
-import com.logreposit.influxdbservice.communication.messaging.handler.processors.cmi_reader_service.EventCmiLogdataReceivedMessageProcessor;
+import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventCmiLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.utils.logging.LoggingUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package com.logreposit.influxdbservice.communication.messaging.handler.processors.cmi_reader_service;
+package com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logreposit.influxdbservice.communication.messaging.common.Message;

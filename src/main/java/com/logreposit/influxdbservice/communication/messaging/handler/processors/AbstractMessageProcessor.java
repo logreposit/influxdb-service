@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-
 public abstract class AbstractMessageProcessor<T> implements MessageProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(AbstractMessageProcessor.class);

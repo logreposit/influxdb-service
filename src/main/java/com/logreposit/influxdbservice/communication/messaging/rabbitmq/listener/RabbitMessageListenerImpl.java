@@ -37,7 +37,7 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
 
     @Override
     @RabbitListener(queues = "${influxdbservice.communication.messaging.rabbit.queue}")
-    public void listen(org.springframework.amqp.core.Message amqpMessage) throws MessagingException
+    public void listen(org.springframework.amqp.core.Message amqpMessage)
     {
         try
         {

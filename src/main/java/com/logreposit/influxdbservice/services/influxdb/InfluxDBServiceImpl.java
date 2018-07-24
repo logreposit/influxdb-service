@@ -208,36 +208,28 @@ public class InfluxDBServiceImpl implements InfluxDBService
 
     private static Map<String, String> getInputTags(Input input)
     {
-        Map<String, String> tags = new HashMap<>();
-
-        tags.putAll(getAbstractIOTags(input));
+        Map<String, String> tags = new HashMap<>(getAbstractIOTags(input));
 
         return tags;
     }
 
     private static Map<String, String> getOutputTags(Output output)
     {
-        Map<String, String> tags = new HashMap<>();
-
-        tags.putAll(getAbstractIOTags(output));
+        Map<String, String> tags = new HashMap<>(getAbstractIOTags(output));
 
         return tags;
     }
 
     private static Map<String, String> getAnalogLoggingValueTags(AnalogLoggingValue analogLoggingValue)
     {
-        Map<String, String> tags = new HashMap<>();
-
-        tags.putAll(getAbstractIOTags(analogLoggingValue));
+        Map<String, String> tags = new HashMap<>(getAbstractIOTags(analogLoggingValue));
 
         return tags;
     }
 
     private static Map<String, String> getDigitalLoggingValueTags(DigitalLoggingValue digitalLoggingValue)
     {
-        Map<String, String> tags = new HashMap<>();
-
-        tags.putAll(getAbstractIOTags(digitalLoggingValue));
+        Map<String, String> tags = new HashMap<>(getAbstractIOTags(digitalLoggingValue));
 
         return tags;
     }

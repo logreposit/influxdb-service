@@ -4,5 +4,5 @@ import com.logreposit.influxdbservice.communication.messaging.exceptions.Messagi
 
 public interface RabbitMessageListener
 {
-    void listen(org.springframework.amqp.core.Message amqpMessage) throws MessagingException;
+    void listen(org.springframework.amqp.core.Message amqpMessage);
 }

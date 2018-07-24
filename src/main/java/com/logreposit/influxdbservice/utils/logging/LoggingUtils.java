@@ -8,9 +8,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by dom on 12/13/16.
- */
 public class LoggingUtils
 {
     private static final Logger logger = LoggerFactory.getLogger(LoggingUtils.class);

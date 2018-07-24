@@ -1,6 +1,4 @@
-package com.logreposit.influxdbservice.communication.messaging.common;/*
- * Created by dom on 11/17/17
- */
+package com.logreposit.influxdbservice.communication.messaging.common;
 
 public class MessageMetaData
 {

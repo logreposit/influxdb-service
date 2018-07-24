@@ -1,12 +1,7 @@
 package com.logreposit.influxdbservice;
 
-/*
- * Created by dom on 10/21/17
- */
-
 import org.junit.Test;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;

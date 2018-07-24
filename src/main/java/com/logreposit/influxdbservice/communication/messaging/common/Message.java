@@ -4,10 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
 
-/**
- * Created by miglar on 12/13/16.
- */
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Message
 {

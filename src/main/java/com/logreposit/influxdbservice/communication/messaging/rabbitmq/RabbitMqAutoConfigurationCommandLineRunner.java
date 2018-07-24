@@ -67,7 +67,7 @@ public class RabbitMqAutoConfigurationCommandLineRunner implements CommandLineRu
         for (MessageType messageType : SUBSCRIBED_MESSAGE_TYPES)
         {
             String  exchangeName = String.format("x.%s", messageType.toString().toLowerCase());
-            Binding binding      = new Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, UUID.randomUUID().toString(), new HashMap<>());
+            Binding binding      = new Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "", new HashMap<>());
 
             logger.info("Declaring binding {} => {} ...", exchangeName, queueName);
 

@@ -60,6 +60,7 @@ public class MessageHandlerImpl implements MessageHandler
         try
         {
             MessageType messageType = MessageType.valueOf(message.getType());
+
             return messageType;
         }
         catch (IllegalArgumentException exception)

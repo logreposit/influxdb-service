@@ -44,6 +44,7 @@ public class InfluxDBServiceImpl implements InfluxDBService
     public void insert(String organizationId, String deviceId, CmiLogData cmiLogData) throws InfluxDBServiceException
     {
         checkIfInputIsValidOtherwiseThrowException(organizationId, deviceId, cmiLogData);
+
         this.createDatabaseForDeviceIfNotExistent(deviceId);
 
         BatchPoints batchPoints = createBatchPoints(deviceId, cmiLogData);
@@ -63,8 +64,7 @@ public class InfluxDBServiceImpl implements InfluxDBService
     private static BatchPoints createBatchPoints(String deviceId, CmiLogData cmiLogData)
     {
         BatchPoints.Builder batchPointsBuilder = BatchPoints.database(deviceId);
-
-        List<Point> points = createPoints(cmiLogData);
+        List<Point>         points             = createPoints(cmiLogData);
 
         for (Point point : points)
         {
@@ -106,7 +106,6 @@ public class InfluxDBServiceImpl implements InfluxDBService
     private static List<Point> createPoints(CmiLogData cmiLogData)
     {
         List<Point> points = new ArrayList<>();
-
         long unixTimestamp = cmiLogData.getDate().getTime();
 
         if (!CollectionUtils.isEmpty(cmiLogData.getInputs()))

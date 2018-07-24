@@ -21,8 +21,8 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
 {
     private static final Logger logger = LoggerFactory.getLogger(RabbitMessageListenerImpl.class);
 
-    private final ObjectMapper objectMapper;
-    private final MessageHandler messageHandler;
+    private final ObjectMapper        objectMapper;
+    private final MessageHandler      messageHandler;
     private final MessageErrorHandler messageErrorHandler;
 
     @Autowired
@@ -30,8 +30,8 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
                                      MessageHandler messageHandler,
                                      MessageErrorHandler messageErrorHandler)
     {
-        this.objectMapper = objectMapper;
-        this.messageHandler = messageHandler;
+        this.objectMapper        = objectMapper;
+        this.messageHandler      = messageHandler;
         this.messageErrorHandler = messageErrorHandler;
     }
 
@@ -44,7 +44,7 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
             if (amqpMessage.getMessageProperties().getRedelivered())
                 logger.warn("Message is redelivered.");
 
-            String payload = new String(amqpMessage.getBody(), StandardCharsets.UTF_8);
+            String  payload         = new String(amqpMessage.getBody(), StandardCharsets.UTF_8);
             Message bitmovinMessage = this.convertStringToBitmovinMessage(payload);
 
             this.messageHandler.handleMessage(bitmovinMessage);
@@ -52,6 +52,7 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
         catch (Exception exception)
         {
             logger.error("Caught Exception while processing AMQP message: {}", LoggingUtils.getLogForException(exception));
+
             this.messageErrorHandler.handleError(amqpMessage, exception);
         }
     }

@@ -13,7 +13,7 @@ public abstract class AbstractMessageProcessor<T> implements MessageProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(AbstractMessageProcessor.class);
 
-    protected ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     public AbstractMessageProcessor(ObjectMapper objectMapper)
     {

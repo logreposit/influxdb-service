@@ -10,18 +10,18 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CmiLogData
 {
-    private Date date;
-    private DeviceType deviceType;
-    private List<Input> inputs;
-    private List<Output> outputs;
-    private List<AnalogLoggingValue> analogLoggingValues;
+    private Date                      date;
+    private DeviceType                deviceType;
+    private List<Input>               inputs;
+    private List<Output>              outputs;
+    private List<AnalogLoggingValue>  analogLoggingValues;
     private List<DigitalLoggingValue> digitalLoggingValues;
 
     public CmiLogData()
     {
-        this.inputs = new ArrayList<>();
-        this.outputs = new ArrayList<>();
-        this.analogLoggingValues = new ArrayList<>();
+        this.inputs               = new ArrayList<>();
+        this.outputs              = new ArrayList<>();
+        this.analogLoggingValues  = new ArrayList<>();
         this.digitalLoggingValues = new ArrayList<>();
     }
 

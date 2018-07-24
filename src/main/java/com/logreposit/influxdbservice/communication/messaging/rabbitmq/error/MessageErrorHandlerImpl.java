@@ -21,10 +21,10 @@ public class MessageErrorHandlerImpl implements MessageErrorHandler
     private static final Logger logger = LoggerFactory.getLogger(MessageErrorHandlerImpl.class);
 
     private static final String MESSAGE_ERROR_COUNT_HEADER_KEY = "x-error-count";
-    private static final String ERROR_EXCHANGE_NAME = "x_error";
+    private static final String ERROR_EXCHANGE_NAME            = "x_error";
 
     private final RabbitMessageSender messageSender;
-    private final RetryStrategy retryStrategy;
+    private final RetryStrategy       retryStrategy;
 
     @Autowired
     public MessageErrorHandlerImpl(RabbitMessageSender messageSender, RetryStrategy retryStrategy)
@@ -36,8 +36,7 @@ public class MessageErrorHandlerImpl implements MessageErrorHandler
     private static Long getMessageErrorCount(Message amqpMessage)
     {
         Object errorCountAsObject = amqpMessage.getMessageProperties().getHeaders().get(MESSAGE_ERROR_COUNT_HEADER_KEY);
-
-        Long errorCount = 1L;
+        Long   errorCount         = 1L;
 
         if (errorCountAsObject != null)
             errorCount = (Long) errorCountAsObject;
@@ -70,6 +69,7 @@ public class MessageErrorHandlerImpl implements MessageErrorHandler
     private static Map<String, Object> getHeadersWithNewErrorCountEntry(Long errorCount)
     {
         Map<String, Object> headers = new HashMap<>();
+
         headers.put(MESSAGE_ERROR_COUNT_HEADER_KEY, errorCount);
 
         return headers;
@@ -79,7 +79,7 @@ public class MessageErrorHandlerImpl implements MessageErrorHandler
     public void handleError(Message amqpMessage, Exception exception)
     {
         String originQueue = amqpMessage.getMessageProperties().getConsumerQueue();
-        Long errorCount = getMessageErrorCount(amqpMessage);
+        Long   errorCount  = getMessageErrorCount(amqpMessage);
 
         if (exception instanceof NotRetryableMessagingException || isNotRetryablePerDefinition(exception))
         {

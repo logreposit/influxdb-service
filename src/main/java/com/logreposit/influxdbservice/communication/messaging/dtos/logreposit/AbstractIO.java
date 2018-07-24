@@ -7,10 +7,10 @@ import com.logreposit.influxdbservice.communication.messaging.dtos.logreposit.en
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class AbstractIO
 {
-    private Integer number;
+    private Integer    number;
     private SignalType signal;
-    private Unit unit;
-    private Double value;
+    private Unit       unit;
+    private Double     value;
 
     public Integer getNumber()
     {

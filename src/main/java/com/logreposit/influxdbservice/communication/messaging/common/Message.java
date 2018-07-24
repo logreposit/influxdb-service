@@ -7,11 +7,11 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Message
 {
-    private String id;
-    private Date date;
-    private String type;
+    private String          id;
+    private Date            date;
+    private String          type;
     private MessageMetaData metaData;
-    private String payload;
+    private String          payload;
 
     public String getId()
     {

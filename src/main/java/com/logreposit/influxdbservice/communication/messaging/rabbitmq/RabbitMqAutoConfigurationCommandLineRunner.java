@@ -8,7 +8,6 @@ import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.ExchangeBuilder;
-import org.springframework.amqp.core.Queue;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +42,6 @@ public class RabbitMqAutoConfigurationCommandLineRunner implements CommandLineRu
     private void configureRabbit()
     {
         this.declareExchanges();
-        this.declareQueue();
         this.declareBindings();
     }
 
@@ -60,18 +58,6 @@ public class RabbitMqAutoConfigurationCommandLineRunner implements CommandLineRu
 
             logger.warn("Declared exchange '{}'.", exchangeName);
         }
-    }
-
-    private void declareQueue()
-    {
-        String queueName = this.rabbitConfiguration.getQueue();
-        Queue  queue     = new Queue(queueName, true);
-
-        logger.warn("declaring queue '{}' ...", queueName);
-
-        this.amqpAdmin.declareQueue(queue);
-
-        logger.warn("declared queue '{}'.", queueName);
     }
 
     private void declareBindings()

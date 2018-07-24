@@ -6,6 +6,7 @@ import com.logreposit.influxdbservice.communication.messaging.exceptions.Messagi
 import com.logreposit.influxdbservice.communication.messaging.exceptions.NotRetryableMessagingException;
 import com.logreposit.influxdbservice.communication.messaging.exceptions.RetryableMessagingException;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventCmiLogdataReceivedMessageProcessor;
+import com.logreposit.influxdbservice.utils.RequestCorrelation;
 import com.logreposit.influxdbservice.utils.logging.LoggingUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ public class MessageHandlerImpl implements MessageHandler
     {
         logger.info("Retrieved message: {}", LoggingUtils.serialize(message));
 
+        setCorrelationId(message);
         checkIfMessageIsValidOrThrowNotRetryableException(message);
 
         MessageType messageType = getTypeOfMessage(message);
@@ -43,6 +45,18 @@ public class MessageHandlerImpl implements MessageHandler
             default:
                 logger.info("No handler for MessageType '{}' existent. Skipping that one.", messageType.toString());
                 break;
+        }
+    }
+
+    private static void setCorrelationId(Message message)
+    {
+        if (message.getMetaData() != null && StringUtils.isNotEmpty(message.getMetaData().getCorrelationId()))
+        {
+            RequestCorrelation.setCorrelationId(message.getMetaData().getCorrelationId());
+        }
+        else
+        {
+            RequestCorrelation.setCorrelationId(null);
         }
     }
 

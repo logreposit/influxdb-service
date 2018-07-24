@@ -32,19 +32,20 @@ public class EventCmiLogdataReceivedMessageProcessor extends AbstractMessageProc
     @Override
     public void processMessage(Message message) throws MessagingException
     {
-        String     organizationId = message.getMetaData().getOrganizationId();
+        String     userId         = message.getMetaData().getUserId();
         String     deviceId       = message.getMetaData().getDeviceId();
         CmiLogData cmiLogData     = this.getMessagePayload(message, CmiLogData.class);
 
-        logger.info("Retrieved CmiLogData for Organization '{}' and Device '{}': {}",
-                organizationId,
+        logger.info(
+                "Retrieved CmiLogData for Device '{}' of User '{}': {}",
                 deviceId,
+                userId,
                 LoggingUtils.serialize(cmiLogData)
         );
 
         try
         {
-            this.influxDBService.insert(organizationId, deviceId, cmiLogData);
+            this.influxDBService.insert(deviceId, cmiLogData);
 
             logger.info("Successfully processed Payload.");
         }

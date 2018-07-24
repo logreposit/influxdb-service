@@ -41,9 +41,9 @@ public class InfluxDBServiceImpl implements InfluxDBService
     }
 
     @Override
-    public void insert(String organizationId, String deviceId, CmiLogData cmiLogData) throws InfluxDBServiceException
+    public void insert(String deviceId, CmiLogData cmiLogData) throws InfluxDBServiceException
     {
-        checkIfInputIsValidOtherwiseThrowException(organizationId, deviceId, cmiLogData);
+        checkIfInputIsValidOtherwiseThrowException(deviceId, cmiLogData);
 
         this.createDatabaseForDeviceIfNotExistent(deviceId);
 
@@ -76,14 +76,8 @@ public class InfluxDBServiceImpl implements InfluxDBService
         return batchPoints;
     }
 
-    private static void checkIfInputIsValidOtherwiseThrowException(String organizationId, String deviceId, CmiLogData cmiLogData) throws InfluxDBServiceException
+    private static void checkIfInputIsValidOtherwiseThrowException(String deviceId, CmiLogData cmiLogData) throws InfluxDBServiceException
     {
-        if (StringUtils.isBlank(organizationId))
-        {
-            logger.error("organizationId is blank!");
-            throw new InfluxDBServiceException("organizationId is blank!");
-        }
-
         if (StringUtils.isBlank(deviceId))
         {
             logger.error("deviceId is blank!");

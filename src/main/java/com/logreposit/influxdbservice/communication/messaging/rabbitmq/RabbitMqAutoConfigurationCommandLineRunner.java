@@ -70,7 +70,7 @@ public class RabbitMqAutoConfigurationCommandLineRunner implements CommandLineRu
 
             Queue retryQueue = QueueBuilder.durable("retry.q." + retryInterval)
                                            .withArgument("x-dead-letter-exchange", "")
-                                           .withArgument("x-message-ttl", "10000")
+                                           .withArgument("x-message-ttl", retryInterval)
                                            .build();
 
             this.amqpAdmin.declareQueue(retryQueue);

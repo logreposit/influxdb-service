@@ -66,8 +66,8 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
         }
         catch (IOException exception)
         {
-            logger.error("Unable to deserialize message payload to bitmovin Message instance: {}", LoggingUtils.getLogForException(exception));
-            throw new NotRetryableMessagingException("Unable to deserialize AMQP Message Payload to bitmovin Message instance", exception);
+            logger.error("Unable to deserialize message payload to Message instance: {}", LoggingUtils.getLogForException(exception));
+            throw new NotRetryableMessagingException("Unable to deserialize AMQP Message Payload to Message instance", exception);
         }
     }
 }

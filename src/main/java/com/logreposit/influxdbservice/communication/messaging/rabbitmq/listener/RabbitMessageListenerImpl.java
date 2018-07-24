@@ -8,6 +8,7 @@ import com.logreposit.influxdbservice.communication.messaging.rabbitmq.error.Mes
 import com.logreposit.influxdbservice.utils.logging.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
     }
 
     @Override
-    @RabbitListener(queues = "${influxdbservice.communication.messaging.rabbit.queue}")
+    @RabbitListener(queuesToDeclare = @Queue("${influxdbservice.communication.messaging.rabbit.queue}"))
     public void listen(org.springframework.amqp.core.Message amqpMessage)
     {
         try

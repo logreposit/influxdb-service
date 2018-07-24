@@ -14,4 +14,3 @@ public class MessagingException extends LogrepositException
         super(message, cause);
     }
 }
- 

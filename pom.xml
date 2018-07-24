@@ -5,7 +5,7 @@
 
     <groupId>com.logreposit</groupId>
     <artifactId>influxdb-service</artifactId>
-    <version>dev-7-g49611a4</version>
+    <version>dev-8-gf7cf8fc</version>
     <packaging>jar</packaging>
 
     <name>influxdb-service</name>

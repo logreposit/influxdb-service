@@ -2,7 +2,6 @@ package com.logreposit.influxdbservice.communication.messaging.rabbitmq.listener
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logreposit.influxdbservice.communication.messaging.common.Message;
-import com.logreposit.influxdbservice.communication.messaging.exceptions.MessagingException;
 import com.logreposit.influxdbservice.communication.messaging.exceptions.NotRetryableMessagingException;
 import com.logreposit.influxdbservice.communication.messaging.handler.MessageHandler;
 import com.logreposit.influxdbservice.communication.messaging.rabbitmq.error.MessageErrorHandler;
@@ -44,10 +43,10 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
             if (amqpMessage.getMessageProperties().getRedelivered())
                 logger.warn("Message is redelivered.");
 
-            String  payload         = new String(amqpMessage.getBody(), StandardCharsets.UTF_8);
-            Message bitmovinMessage = this.convertStringToBitmovinMessage(payload);
+            String  payload = new String(amqpMessage.getBody(), StandardCharsets.UTF_8);
+            Message message = this.convertStringToMessage(payload);
 
-            this.messageHandler.handleMessage(bitmovinMessage);
+            this.messageHandler.handleMessage(message);
         }
         catch (Exception exception)
         {
@@ -57,7 +56,7 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
         }
     }
 
-    private Message convertStringToBitmovinMessage(String payload) throws NotRetryableMessagingException
+    private Message convertStringToMessage(String payload) throws NotRetryableMessagingException
     {
         try
         {

@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
+import org.influxdb.dto.Query;
+import org.influxdb.dto.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +47,74 @@ public class InfluxDBServiceImpl implements InfluxDBService
     {
         checkIfInputIsValidOtherwiseThrowException(deviceId, cmiLogData);
 
-        this.createDatabaseForDeviceIfNotExistent(deviceId);
+        // this.createDatabaseForDeviceIfNotExistent(deviceId);
+        this.checkIfDatabaseExistent(deviceId);
 
         BatchPoints batchPoints = createBatchPoints(deviceId, cmiLogData);
 
         this.influxDB.write(batchPoints);
+    }
+
+    @Override
+    public void createUser(String user, String password) throws InfluxDBServiceException
+    {
+        String escapedUser     = user.replace(" ", "");
+        String escapedPassword = password.replace("'", "\\'");
+        String queryString     = String.format("CREATE USER \"%s\" WITH PASSWORD '%s'", escapedUser, escapedPassword);
+        Query  query           = new Query(queryString, "_internal", true);
+
+        logger.info("Executing query: {}", queryString);
+
+        QueryResult queryResult = this.influxDB.query(query);
+
+        if (queryResult == null)
+        {
+            logger.error("Unable to create user at InfluxDB. QueryResult is null.");
+            throw new InfluxDBServiceException("Unable to create user at InfluxDB. QueryResult is null");
+        }
+
+        if (queryResult.hasError())
+        {
+            logger.error("Unable to create user at InfluxDB: {}", queryResult.getError());
+            throw new InfluxDBServiceException(String.format("Unable to create user at InfluxDB: %s", queryResult.getError()));
+        }
+
+        logger.info("Successfully created user '{}' at InfluxDB.", escapedUser);
+    }
+
+    @Override
+    public void createDatabase(String name, String readOnlyUserName) throws InfluxDBServiceException
+    {
+        String escapedUser = readOnlyUserName.replace(" ", "");
+
+        if (!this.influxDB.describeDatabases().contains(name))
+        {
+            logger.info("There's no database for device with ID '{}' existent yet. Creating a new one.", name);
+            this.influxDB.createDatabase(name);
+        }
+
+        logger.info("Successfully created database '{}' at InfluxDB.", name);
+
+        String queryString     = String.format("GRANT READ ON \"%s\" TO \"%s\"", name, escapedUser);
+        Query  query           = new Query(queryString, "_internal", true);
+
+        logger.info("Executing query: {}", queryString);
+
+        QueryResult queryResult = this.influxDB.query(query);
+
+        if (queryResult == null)
+        {
+            logger.error("Unable to grant user '{}' read access to InfluxDB '{}'. QueryResult is null.", readOnlyUserName, name);
+            throw new InfluxDBServiceException("Unable to grant user read access to DB. QueryResult is null");
+        }
+
+        if (queryResult.hasError())
+        {
+            logger.error("Unable to grant user '{}' read access to InfluxDB '{}': {}", readOnlyUserName, name, queryResult.getError());
+            throw new InfluxDBServiceException(String.format("Unable to grant user read access to DB: %s", queryResult.getError()));
+        }
+
+        logger.info("Successfully granted user '{}' READ permissions to '{}' at InfluxDB.", escapedUser, name);
     }
 
     private void createDatabaseForDeviceIfNotExistent(String deviceId)
@@ -60,6 +125,15 @@ public class InfluxDBServiceImpl implements InfluxDBService
         {
             logger.info("There's no database for device with ID '{}' existent yet. Creating a new one.", deviceId);
             this.influxDB.createDatabase(deviceId);
+        }
+    }
+
+    private void checkIfDatabaseExistent(String deviceId) throws InfluxDBServiceException
+    {
+        if (!this.influxDB.describeDatabases().contains(deviceId))
+        {
+            logger.error("Database for deviceId '{}' is not existent yet.", deviceId);
+            throw new InfluxDBServiceException("Database for device with given id is not existent yet.");
         }
     }
 

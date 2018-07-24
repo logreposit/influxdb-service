@@ -4,5 +4,7 @@ import com.logreposit.influxdbservice.communication.messaging.dtos.logreposit.Cm
 
 public interface InfluxDBService
 {
-    void insert(String deviceId, CmiLogData cmiLogData) throws InfluxDBServiceException;
+    void insert         (String deviceId, CmiLogData cmiLogData) throws InfluxDBServiceException;
+    void createUser     (String user, String password)           throws InfluxDBServiceException;
+    void createDatabase (String name, String readOnlyUserName)   throws InfluxDBServiceException;
 }

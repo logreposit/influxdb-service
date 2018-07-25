@@ -5,22 +5,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class BackoffRetryStrategy implements RetryStrategy
 {
-    private static final String RETRY_EXCHANGE_10000_NAME  = "x_retry_10000";
-    private static final String RETRY_EXCHANGE_30000_NAME  = "x_retry_30000";
-    private static final String RETRY_EXCHANGE_300000_NAME = "x_retry_300000";
+    public static final int[] RETRY_INTERVALS = {10000, 30000, 300000};
 
     @Override
     public String getExchangeName(long errorCount, String defaultExchangeName)
     {
         if (errorCount <= 5)
-            return RETRY_EXCHANGE_10000_NAME;
+            return getExchangeNameForRetryInterval(RETRY_INTERVALS[0]);
 
         if (errorCount <= 10)
-            return RETRY_EXCHANGE_30000_NAME;
+            return getExchangeNameForRetryInterval(RETRY_INTERVALS[1]);
 
         if (errorCount <= 15)
-            return RETRY_EXCHANGE_300000_NAME;
+            return getExchangeNameForRetryInterval(RETRY_INTERVALS[2]);
 
         return defaultExchangeName;
+    }
+
+    public static String getExchangeNameForRetryInterval(int retryInterval)
+    {
+        return "retry.x." + retryInterval;
     }
 }

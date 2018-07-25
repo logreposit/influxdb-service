@@ -2,13 +2,13 @@ package com.logreposit.influxdbservice.communication.messaging.rabbitmq.listener
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logreposit.influxdbservice.communication.messaging.common.Message;
-import com.logreposit.influxdbservice.communication.messaging.exceptions.MessagingException;
 import com.logreposit.influxdbservice.communication.messaging.exceptions.NotRetryableMessagingException;
 import com.logreposit.influxdbservice.communication.messaging.handler.MessageHandler;
 import com.logreposit.influxdbservice.communication.messaging.rabbitmq.error.MessageErrorHandler;
 import com.logreposit.influxdbservice.utils.logging.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +21,8 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
 {
     private static final Logger logger = LoggerFactory.getLogger(RabbitMessageListenerImpl.class);
 
-    private final ObjectMapper objectMapper;
-    private final MessageHandler messageHandler;
+    private final ObjectMapper        objectMapper;
+    private final MessageHandler      messageHandler;
     private final MessageErrorHandler messageErrorHandler;
 
     @Autowired
@@ -30,33 +30,34 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
                                      MessageHandler messageHandler,
                                      MessageErrorHandler messageErrorHandler)
     {
-        this.objectMapper = objectMapper;
-        this.messageHandler = messageHandler;
+        this.objectMapper        = objectMapper;
+        this.messageHandler      = messageHandler;
         this.messageErrorHandler = messageErrorHandler;
     }
 
     @Override
-    @RabbitListener(queues = "${influxdbservice.communication.messaging.rabbit.queue}")
-    public void listen(org.springframework.amqp.core.Message amqpMessage) throws MessagingException
+    @RabbitListener(queuesToDeclare = @Queue(value = "${influxdbservice.communication.messaging.rabbit.queue}", durable = "true"))
+    public void listen(org.springframework.amqp.core.Message amqpMessage)
     {
         try
         {
             if (amqpMessage.getMessageProperties().getRedelivered())
                 logger.warn("Message is redelivered.");
 
-            String payload = new String(amqpMessage.getBody(), StandardCharsets.UTF_8);
-            Message bitmovinMessage = this.convertStringToBitmovinMessage(payload);
+            String  payload = new String(amqpMessage.getBody(), StandardCharsets.UTF_8);
+            Message message = this.convertStringToMessage(payload);
 
-            this.messageHandler.handleMessage(bitmovinMessage);
+            this.messageHandler.handleMessage(message);
         }
         catch (Exception exception)
         {
             logger.error("Caught Exception while processing AMQP message: {}", LoggingUtils.getLogForException(exception));
+
             this.messageErrorHandler.handleError(amqpMessage, exception);
         }
     }
 
-    private Message convertStringToBitmovinMessage(String payload) throws NotRetryableMessagingException
+    private Message convertStringToMessage(String payload) throws NotRetryableMessagingException
     {
         try
         {
@@ -66,8 +67,8 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
         }
         catch (IOException exception)
         {
-            logger.error("Unable to deserialize message payload to bitmovin Message instance: {}", LoggingUtils.getLogForException(exception));
-            throw new NotRetryableMessagingException("Unable to deserialize AMQP Message Payload to bitmovin Message instance", exception);
+            logger.error("Unable to deserialize message payload to Message instance: {}", LoggingUtils.getLogForException(exception));
+            throw new NotRetryableMessagingException("Unable to deserialize AMQP Message Payload to Message instance", exception);
         }
     }
 }

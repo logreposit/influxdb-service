@@ -20,6 +20,7 @@ public class InfluxDBConfiguration
     public InfluxDB influxDb()
     {
         InfluxDB influxDB = InfluxDBFactory.connect(this.url, this.username, this.password);
+
         return influxDB;
     }
 

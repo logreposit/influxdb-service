@@ -8,9 +8,4 @@ public class InfluxDBServiceException extends LogrepositException
     {
         super(message);
     }
-
-    public InfluxDBServiceException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
 }

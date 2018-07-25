@@ -1,4 +1,4 @@
-package com.logreposit.influxdbservice.communication.messaging.dtos.logreposit.enums;
+package com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.tacmi.enums;
 
 public enum DeviceType
 {

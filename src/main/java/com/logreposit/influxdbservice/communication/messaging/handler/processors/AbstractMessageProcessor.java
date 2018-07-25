@@ -9,12 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-
 public abstract class AbstractMessageProcessor<T> implements MessageProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(AbstractMessageProcessor.class);
 
-    protected ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     public AbstractMessageProcessor(ObjectMapper objectMapper)
     {
@@ -27,7 +26,7 @@ public abstract class AbstractMessageProcessor<T> implements MessageProcessor
         {
             T payload = this.objectMapper.reader().forType(clazz).readValue(message.getPayload());
 
-            logger.info("Successfully deserialized Message Payload into {} instance: {}", clazz.toString(), LoggingUtils.serializeForLoggingWithDefault(payload));
+            logger.info("Successfully deserialized Message Payload into {} instance: {}", clazz.toString(), LoggingUtils.serialize(payload));
 
             return payload;
         }

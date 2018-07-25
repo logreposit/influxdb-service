@@ -18,8 +18,6 @@ public class InfluxDBServiceImpl implements InfluxDBService
 {
     private static final Logger logger = LoggerFactory.getLogger(InfluxDBServiceImpl.class);
 
-    private static final String SHOW_DATABASE_COMMAND_ENCODED = Query.encode("SHOW DATABASES");
-
     private final InfluxDB influxDB;
 
     @Autowired
@@ -73,7 +71,7 @@ public class InfluxDBServiceImpl implements InfluxDBService
 
     private List<String> showDatabases() throws InfluxDBServiceException
     {
-        Query       query       = new Query(SHOW_DATABASE_COMMAND_ENCODED, "_internal", false);
+        Query       query       = new Query("SHOW DATABASES", "_internal", false);
         QueryResult queryResult = this.influxDB.query(query);
 
         if (queryResult == null)

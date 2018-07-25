@@ -7,8 +7,6 @@ import com.logreposit.influxdbservice.communication.messaging.exceptions.Messagi
 import com.logreposit.influxdbservice.communication.messaging.exceptions.RetryableMessagingException;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.AbstractMessageProcessor;
 import com.logreposit.influxdbservice.services.influxdb.InfluxDBService;
-import com.logreposit.influxdbservice.services.influxdb.InfluxDBServiceException;
-import com.logreposit.influxdbservice.services.influxdb.batchpoints.BatchPointsFactoryException;
 import com.logreposit.influxdbservice.services.influxdb.batchpoints.tacmi.CmiLogdataBatchPointsFactory;
 import com.logreposit.influxdbservice.services.influxdb.batchpoints.tacmi.CmiLogdataBatchPointsFactoryException;
 import com.logreposit.influxdbservice.utils.logging.LoggingUtils;

@@ -6,7 +6,6 @@ import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi
 import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.tacmi.DigitalLoggingValue;
 import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.tacmi.Input;
 import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.tacmi.Output;
-import com.logreposit.influxdbservice.services.influxdb.InfluxDBServiceException;
 import org.apache.commons.lang3.StringUtils;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;

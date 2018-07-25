@@ -1,6 +1,5 @@
 package com.logreposit.influxdbservice.communication.messaging.handler.processors;
 
-
 import com.logreposit.influxdbservice.communication.messaging.common.Message;
 import com.logreposit.influxdbservice.communication.messaging.exceptions.MessagingException;
 

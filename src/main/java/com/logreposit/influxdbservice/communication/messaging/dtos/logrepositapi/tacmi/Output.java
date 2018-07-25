@@ -1,8 +1,4 @@
-package com.logreposit.influxdbservice.communication.messaging.dtos.logreposit;
-
-/*
- * Created by dom on 10/21/17
- */
+package com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.tacmi;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

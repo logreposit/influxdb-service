@@ -19,24 +19,24 @@ public class RabbitMessageSenderImpl implements RabbitMessageSender
 {
     private static final Logger logger = LoggerFactory.getLogger(RabbitMessageSenderImpl.class);
 
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper   objectMapper;
     private final RabbitTemplate rabbitTemplate;
 
     @Autowired
     public RabbitMessageSenderImpl(ObjectMapper objectMapper, RabbitTemplate rabbitTemplate)
     {
-        this.objectMapper = objectMapper;
+        this.objectMapper   = objectMapper;
         this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
     public void send(Message message) throws MessageSenderException
     {
-        String exchange = String.format("x.%s", message.getType().toLowerCase());
+        String exchange   = String.format("x.%s", message.getType().toLowerCase());
         String routingKey = UUID.randomUUID().toString();
-        String payload = this.serializeMessageForAMQPDelivery(message);
+        String payload    = this.serializeMessageForAMQPDelivery(message);
 
-        logger.info("Sending message to exchange '{}' with routing key '{}': {}", exchange, routingKey, LoggingUtils.serializeForLoggingWithDefault(message));
+        logger.info("Sending message to exchange '{}' with routing key '{}': {}", exchange, routingKey, LoggingUtils.serialize(message));
 
         this.rabbitTemplate.convertAndSend(exchange, routingKey, payload);
     }
@@ -61,6 +61,7 @@ public class RabbitMessageSenderImpl implements RabbitMessageSender
         catch (JsonProcessingException exception)
         {
             logger.error("Unable to serialize Message instance: {}", LoggingUtils.getLogForException(exception));
+
             throw new MessageSenderException("Unable to serialize Message instance", exception);
         }
     }

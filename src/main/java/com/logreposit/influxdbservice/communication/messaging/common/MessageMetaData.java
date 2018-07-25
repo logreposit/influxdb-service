@@ -1,20 +1,33 @@
-package com.logreposit.influxdbservice.communication.messaging.common;/*
- * Created by dom on 11/17/17
- */
+package com.logreposit.influxdbservice.communication.messaging.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MessageMetaData
 {
-    private String organizationId;
+    private String userId;
+    private String userEmail;
     private String deviceId;
+    private String correlationId;
 
-    public String getOrganizationId()
+    public String getUserId()
     {
-        return this.organizationId;
+        return this.userId;
     }
 
-    public void setOrganizationId(String organizationId)
+    public void setUserId(String userId)
     {
-        this.organizationId = organizationId;
+        this.userId = userId;
+    }
+
+    public String getUserEmail()
+    {
+        return this.userEmail;
+    }
+
+    public void setUserEmail(String userEmail)
+    {
+        this.userEmail = userEmail;
     }
 
     public String getDeviceId()
@@ -25,5 +38,15 @@ public class MessageMetaData
     public void setDeviceId(String deviceId)
     {
         this.deviceId = deviceId;
+    }
+
+    public String getCorrelationId()
+    {
+        return this.correlationId;
+    }
+
+    public void setCorrelationId(String correlationId)
+    {
+        this.correlationId = correlationId;
     }
 }

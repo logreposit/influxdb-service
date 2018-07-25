@@ -1,38 +1,24 @@
 package com.logreposit.influxdbservice.services.influxdb;
 
-import com.logreposit.influxdbservice.communication.messaging.dtos.logreposit.AbstractIO;
-import com.logreposit.influxdbservice.communication.messaging.dtos.logreposit.AnalogLoggingValue;
-import com.logreposit.influxdbservice.communication.messaging.dtos.logreposit.CmiLogData;
-import com.logreposit.influxdbservice.communication.messaging.dtos.logreposit.DigitalLoggingValue;
-import com.logreposit.influxdbservice.communication.messaging.dtos.logreposit.Input;
-import com.logreposit.influxdbservice.communication.messaging.dtos.logreposit.Output;
 import org.apache.commons.lang3.StringUtils;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.BatchPoints;
-import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class InfluxDBServiceImpl implements InfluxDBService
 {
     private static final Logger logger = LoggerFactory.getLogger(InfluxDBServiceImpl.class);
 
-    private static final String INPUT_MEASUREMENT_NAME = "input";
-    private static final String OUTPUT_MEASUREMENT_NAME = "output";
-    private static final String ANALOG_LOGGING_MEASUREMENT_NAME = "analog_logging";
-    private static final String DIGITAL_LOGGING_MEASUREMENT_NAME = "digital_logging";
+    private static final String SHOW_DATABASE_COMMAND_ENCODED = Query.encode("SHOW DATABASES");
 
     private final InfluxDB influxDB;
 
@@ -43,15 +29,8 @@ public class InfluxDBServiceImpl implements InfluxDBService
     }
 
     @Override
-    public void insert(String deviceId, CmiLogData cmiLogData) throws InfluxDBServiceException
+    public void insert(BatchPoints batchPoints)
     {
-        checkIfInputIsValidOtherwiseThrowException(deviceId, cmiLogData);
-
-        // this.createDatabaseForDeviceIfNotExistent(deviceId);
-        this.checkIfDatabaseExistent(deviceId);
-
-        BatchPoints batchPoints = createBatchPoints(deviceId, cmiLogData);
-
         this.influxDB.write(batchPoints);
     }
 
@@ -85,18 +64,86 @@ public class InfluxDBServiceImpl implements InfluxDBService
     @Override
     public void createDatabase(String name, String readOnlyUserName) throws InfluxDBServiceException
     {
-        String escapedUser = readOnlyUserName.replace(" ", "");
-
-        if (!this.influxDB.describeDatabases().contains(name))
-        {
-            logger.info("There's no database for device with ID '{}' existent yet. Creating a new one.", name);
-            this.influxDB.createDatabase(name);
-        }
+        this.createDatabaseIfNotExistent(name);
 
         logger.info("Successfully created database '{}' at InfluxDB.", name);
 
-        String queryString     = String.format("GRANT READ ON \"%s\" TO \"%s\"", name, escapedUser);
-        Query  query           = new Query(queryString, "_internal", true);
+        this.grantReadPermissionsOnDatabaseToUser(name, readOnlyUserName);
+    }
+
+    private List<String> showDatabases() throws InfluxDBServiceException
+    {
+        Query       query       = new Query(SHOW_DATABASE_COMMAND_ENCODED, "_internal", false);
+        QueryResult queryResult = this.influxDB.query(query);
+
+        if (queryResult == null)
+        {
+            logger.error("Unable to list InfluxDB databases. QueryResult is null.");
+            throw new InfluxDBServiceException("Unable to list InfluxDB databases. QueryResult is null");
+        }
+
+        if (queryResult.hasError())
+        {
+            logger.error("Unable to list InfluxDB databases: {}", queryResult.getError());
+            throw new InfluxDBServiceException(String.format("Unable to list InfluxDB databases: %s", queryResult.getError()));
+        }
+
+        List<List<Object>> databaseNames = queryResult.getResults().get(0).getSeries().get(0).getValues();
+
+        List<String> databases = new ArrayList<>();
+
+        if (databaseNames != null)
+        {
+            for (List<Object> database : databaseNames)
+            {
+                databases.add(database.get(0).toString());
+            }
+        }
+
+        return databases;
+    }
+
+    private void createDatabaseIfNotExistent(String name) throws InfluxDBServiceException
+    {
+        if (!this.showDatabases().contains(name))
+        {
+            logger.info("There's no database for device with ID '{}' existent yet. Creating a new one.", name);
+            this.createDatabase(name);
+        }
+    }
+
+    private void createDatabase(String name) throws InfluxDBServiceException
+    {
+        if (StringUtils.isEmpty(name))
+        {
+            logger.error("name == empty");
+            throw new InfluxDBServiceException("name must not be empty");
+        }
+
+        String createDatabaseQueryString = String.format("CREATE DATABASE \"%s\"", name);
+
+        Query query = new Query(createDatabaseQueryString, "_internal", true);
+
+        QueryResult queryResult = this.influxDB.query(query);
+
+        if (queryResult == null)
+        {
+            logger.error("Unable to create InfluxDB database '{}'. QueryResult is null.", name);
+            throw new InfluxDBServiceException(String.format("Unable to create InfluxDB database '%s'. QueryResult is null", name));
+        }
+
+        if (queryResult.hasError())
+        {
+            logger.error("Unable to create InfluxDB database: {}", queryResult.getError());
+            throw new InfluxDBServiceException(String.format("Unable to create InfluxDB database: %s", queryResult.getError()));
+        }
+    }
+
+    private void grantReadPermissionsOnDatabaseToUser(String databaseName, String userName) throws InfluxDBServiceException
+    {
+        String escapedUser = userName.replace(" ", "");
+        String queryString = String.format("GRANT READ ON \"%s\" TO \"%s\"", databaseName, escapedUser);
+        Query  query       = new Query(queryString, "_internal", true);
 
         logger.info("Executing query: {}", queryString);
 
@@ -104,227 +151,16 @@ public class InfluxDBServiceImpl implements InfluxDBService
 
         if (queryResult == null)
         {
-            logger.error("Unable to grant user '{}' read access to InfluxDB '{}'. QueryResult is null.", readOnlyUserName, name);
+            logger.error("Unable to grant user '{}' read access to InfluxDB '{}'. QueryResult is null.", escapedUser, databaseName);
             throw new InfluxDBServiceException("Unable to grant user read access to DB. QueryResult is null");
         }
 
         if (queryResult.hasError())
         {
-            logger.error("Unable to grant user '{}' read access to InfluxDB '{}': {}", readOnlyUserName, name, queryResult.getError());
+            logger.error("Unable to grant user '{}' read access to InfluxDB '{}': {}", escapedUser, databaseName, queryResult.getError());
             throw new InfluxDBServiceException(String.format("Unable to grant user read access to DB: %s", queryResult.getError()));
         }
 
-        logger.info("Successfully granted user '{}' READ permissions to '{}' at InfluxDB.", escapedUser, name);
-    }
-
-    private void createDatabaseForDeviceIfNotExistent(String deviceId)
-    {
-        // TODO DoM: refactor deprecated describeDatabases(), createDatabase()
-
-        if (!this.influxDB.describeDatabases().contains(deviceId))
-        {
-            logger.info("There's no database for device with ID '{}' existent yet. Creating a new one.", deviceId);
-            this.influxDB.createDatabase(deviceId);
-        }
-    }
-
-    private void checkIfDatabaseExistent(String deviceId) throws InfluxDBServiceException
-    {
-        if (!this.influxDB.describeDatabases().contains(deviceId))
-        {
-            logger.error("Database for deviceId '{}' is not existent yet.", deviceId);
-            throw new InfluxDBServiceException("Database for device with given id is not existent yet.");
-        }
-    }
-
-    private static BatchPoints createBatchPoints(String deviceId, CmiLogData cmiLogData)
-    {
-        BatchPoints.Builder batchPointsBuilder = BatchPoints.database(deviceId);
-        List<Point>         points             = createPoints(cmiLogData);
-
-        for (Point point : points)
-        {
-            batchPointsBuilder.point(point);
-        }
-
-        BatchPoints batchPoints = batchPointsBuilder.build();
-
-        return batchPoints;
-    }
-
-    private static void checkIfInputIsValidOtherwiseThrowException(String deviceId, CmiLogData cmiLogData) throws InfluxDBServiceException
-    {
-        if (StringUtils.isBlank(deviceId))
-        {
-            logger.error("deviceId is blank!");
-            throw new InfluxDBServiceException("deviceId is blank!");
-        }
-
-        if (cmiLogData == null)
-        {
-            logger.error("cmiLogData is null!");
-            throw new InfluxDBServiceException("cmiLogData is null!");
-        }
-
-        if (cmiLogData.getDate() == null)
-        {
-            logger.error("cmiLogData.date is null!");
-            throw new InfluxDBServiceException("cmiLogData.date is null!");
-        }
-    }
-
-    private static List<Point> createPoints(CmiLogData cmiLogData)
-    {
-        List<Point> points = new ArrayList<>();
-        long unixTimestamp = cmiLogData.getDate().getTime();
-
-        if (!CollectionUtils.isEmpty(cmiLogData.getInputs()))
-        {
-            for (Input input : cmiLogData.getInputs())
-            {
-                Map<String, String> tags = getInputTags(input);
-
-                Point.Builder pointBuilder = Point.measurement(INPUT_MEASUREMENT_NAME)
-                                                  .time(unixTimestamp, TimeUnit.MILLISECONDS)
-                                                  .tag(tags);
-
-                if (input.getValue() != null)
-                {
-                    pointBuilder.addField("value", input.getValue());
-                }
-
-                if (input.getRasState() != null)
-                {
-                    pointBuilder.addField("ras_state", input.getRasState().toString().toLowerCase());
-                }
-
-                Point point = pointBuilder.build();
-
-                points.add(point);
-            }
-        }
-
-        if (!CollectionUtils.isEmpty(cmiLogData.getOutputs()))
-        {
-            for (Output output : cmiLogData.getOutputs())
-            {
-                Map<String, String> tags = getOutputTags(output);
-
-                Point.Builder pointBuilder = Point.measurement(OUTPUT_MEASUREMENT_NAME)
-                                                  .time(unixTimestamp, TimeUnit.MILLISECONDS)
-                                                  .tag(tags);
-
-                if (output.getValue() != null)
-                {
-                    pointBuilder.addField("value", output.getValue());
-                }
-
-                if (output.getState() != null)
-                {
-                    pointBuilder.addField("state", output.getState());
-                }
-
-                Point point = pointBuilder.build();
-
-                points.add(point);
-            }
-        }
-
-        if (!CollectionUtils.isEmpty(cmiLogData.getAnalogLoggingValues()))
-        {
-            for (AnalogLoggingValue analogLoggingValue : cmiLogData.getAnalogLoggingValues())
-            {
-                Map<String, String> tags = getAnalogLoggingValueTags(analogLoggingValue);
-
-                Point.Builder pointBuilder = Point.measurement(ANALOG_LOGGING_MEASUREMENT_NAME)
-                                                  .time(unixTimestamp, TimeUnit.MILLISECONDS)
-                                                  .tag(tags);
-
-                if (analogLoggingValue.getValue() != null)
-                {
-                    pointBuilder.addField("value", analogLoggingValue.getValue());
-                }
-
-                Point point = pointBuilder.build();
-
-                points.add(point);
-            }
-        }
-
-        if (!CollectionUtils.isEmpty(cmiLogData.getDigitalLoggingValues()))
-        {
-            for (DigitalLoggingValue digitalLoggingValue : cmiLogData.getDigitalLoggingValues())
-            {
-                Map<String, String> tags = getDigitalLoggingValueTags(digitalLoggingValue);
-
-                Point.Builder pointBuilder = Point.measurement(DIGITAL_LOGGING_MEASUREMENT_NAME)
-                                                  .time(unixTimestamp, TimeUnit.MILLISECONDS)
-                                                  .tag(tags);
-
-                if (digitalLoggingValue.getValue() != null)
-                {
-                    pointBuilder.addField("value", digitalLoggingValue.getValue());
-                }
-
-                Point point = pointBuilder.build();
-
-                points.add(point);
-            }
-        }
-
-        return points;
-    }
-
-    private static Map<String, String> getInputTags(Input input)
-    {
-        Map<String, String> tags = new HashMap<>(getAbstractIOTags(input));
-
-        return tags;
-    }
-
-    private static Map<String, String> getOutputTags(Output output)
-    {
-        Map<String, String> tags = new HashMap<>(getAbstractIOTags(output));
-
-        return tags;
-    }
-
-    private static Map<String, String> getAnalogLoggingValueTags(AnalogLoggingValue analogLoggingValue)
-    {
-        Map<String, String> tags = new HashMap<>(getAbstractIOTags(analogLoggingValue));
-
-        return tags;
-    }
-
-    private static Map<String, String> getDigitalLoggingValueTags(DigitalLoggingValue digitalLoggingValue)
-    {
-        Map<String, String> tags = new HashMap<>(getAbstractIOTags(digitalLoggingValue));
-
-        return tags;
-    }
-
-    private static Map<String, String> getAbstractIOTags(AbstractIO abstractIO)
-    {
-        Map<String, String> tags = new HashMap<>();
-
-        if (abstractIO == null)
-            return tags;
-
-        if (abstractIO.getNumber() != null)
-        {
-            tags.put("number", abstractIO.getNumber().toString());
-        }
-
-        if (abstractIO.getSignal() != null)
-        {
-            tags.put("signal", abstractIO.getSignal().toString().toLowerCase());
-        }
-
-        if (abstractIO.getUnit() != null)
-        {
-            tags.put("unit", abstractIO.getUnit().toString().toLowerCase());
-        }
-
-        return tags;
+        logger.info("Successfully granted user '{}' READ permissions to '{}' at InfluxDB.", escapedUser, databaseName);
     }
 }

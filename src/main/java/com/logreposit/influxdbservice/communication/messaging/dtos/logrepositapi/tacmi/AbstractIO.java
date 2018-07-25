@@ -1,8 +1,8 @@
-package com.logreposit.influxdbservice.communication.messaging.dtos.logreposit;
+package com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.tacmi;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.logreposit.influxdbservice.communication.messaging.dtos.logreposit.enums.SignalType;
-import com.logreposit.influxdbservice.communication.messaging.dtos.logreposit.enums.Unit;
+import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.tacmi.enums.SignalType;
+import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.tacmi.enums.Unit;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class AbstractIO

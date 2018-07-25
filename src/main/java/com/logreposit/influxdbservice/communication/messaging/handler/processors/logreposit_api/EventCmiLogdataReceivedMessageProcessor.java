@@ -2,13 +2,17 @@ package com.logreposit.influxdbservice.communication.messaging.handler.processor
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logreposit.influxdbservice.communication.messaging.common.Message;
-import com.logreposit.influxdbservice.communication.messaging.dtos.logreposit.CmiLogData;
+import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.tacmi.CmiLogData;
 import com.logreposit.influxdbservice.communication.messaging.exceptions.MessagingException;
 import com.logreposit.influxdbservice.communication.messaging.exceptions.RetryableMessagingException;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.AbstractMessageProcessor;
 import com.logreposit.influxdbservice.services.influxdb.InfluxDBService;
 import com.logreposit.influxdbservice.services.influxdb.InfluxDBServiceException;
+import com.logreposit.influxdbservice.services.influxdb.batchpoints.BatchPointsFactoryException;
+import com.logreposit.influxdbservice.services.influxdb.batchpoints.tacmi.CmiLogdataBatchPointsFactory;
+import com.logreposit.influxdbservice.services.influxdb.batchpoints.tacmi.CmiLogdataBatchPointsFactoryException;
 import com.logreposit.influxdbservice.utils.logging.LoggingUtils;
+import org.influxdb.dto.BatchPoints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +23,18 @@ public class EventCmiLogdataReceivedMessageProcessor extends AbstractMessageProc
 {
     private static final Logger logger = LoggerFactory.getLogger(EventCmiLogdataReceivedMessageProcessor.class);
 
-    private final InfluxDBService influxDBService;
+    private final InfluxDBService              influxDBService;
+    private final CmiLogdataBatchPointsFactory cmiLogdataBatchPointsFactory;
 
     @Autowired
-    public EventCmiLogdataReceivedMessageProcessor(ObjectMapper objectMapper, InfluxDBService influxDBService)
+    public EventCmiLogdataReceivedMessageProcessor(ObjectMapper objectMapper,
+                                                   InfluxDBService influxDBService,
+                                                   CmiLogdataBatchPointsFactory cmiLogdataBatchPointsFactory)
     {
         super(objectMapper);
 
-        this.influxDBService = influxDBService;
+        this.influxDBService              = influxDBService;
+        this.cmiLogdataBatchPointsFactory = cmiLogdataBatchPointsFactory;
     }
 
     @Override
@@ -45,14 +53,16 @@ public class EventCmiLogdataReceivedMessageProcessor extends AbstractMessageProc
 
         try
         {
-            this.influxDBService.insert(deviceId, cmiLogData);
+            BatchPoints batchPoints = this.cmiLogdataBatchPointsFactory.createBatchPoints(deviceId, cmiLogData);
+
+            this.influxDBService.insert(batchPoints);
 
             logger.info("Successfully processed Payload.");
         }
-        catch (InfluxDBServiceException exception)
+        catch (CmiLogdataBatchPointsFactoryException exception)
         {
-            logger.error("Caught InfluxDBServiceException while inserting data: {}", LoggingUtils.getLogForException(exception));
-            throw new RetryableMessagingException("Caught InfluxDBServiceException while inserting data", exception);
+            logger.error("Caught CmiLogdataBatchPointsFactoryException while preparing data for insertion into DB: {}", LoggingUtils.getLogForException(exception));
+            throw new RetryableMessagingException("Caught CmiLogdataBatchPointsFactoryException while preparing data for insertion into DB", exception);
         }
     }
 }

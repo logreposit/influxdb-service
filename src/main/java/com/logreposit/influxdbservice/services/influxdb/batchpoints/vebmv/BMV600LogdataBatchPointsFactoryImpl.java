@@ -16,10 +16,6 @@ public class BMV600LogdataBatchPointsFactoryImpl implements BMV600LogdataBatchPo
     private static final Logger logger = LoggerFactory.getLogger(BMV600LogdataBatchPointsFactoryImpl.class);
 
     private static final String MEASUREMENT_NAME   = "data";
-    private static final String VOLTAGE_FIELD_NAME = "voltage";
-    private static final String CURRENT_FIELD_NAME = "current";
-    private static final String RELAY_FIELD_NAME   = "relay";
-    private static final String ALARM_FIELD_NAME   = "alarm";
 
     @Override
     public BatchPoints createBatchPoints(String deviceId, BMV600LogData bmv600LogData) throws BMV600LogdataBatchPointsFactoryException
@@ -38,10 +34,14 @@ public class BMV600LogdataBatchPointsFactoryImpl implements BMV600LogdataBatchPo
         long          unixTimestamp = bmv600LogData.getDate().getTime();
         Point.Builder pointBuilder  = Point.measurement(MEASUREMENT_NAME).time(unixTimestamp, TimeUnit.MILLISECONDS);
 
-        pointBuilder.addField(VOLTAGE_FIELD_NAME, bmv600LogData.getVoltage());
-        pointBuilder.addField(CURRENT_FIELD_NAME, bmv600LogData.getCurrent());
-        pointBuilder.addField(RELAY_FIELD_NAME, bmv600LogData.getRelay());
-        pointBuilder.addField(ALARM_FIELD_NAME, bmv600LogData.getAlarm());
+        pointBuilder.addField("alarm", bmv600LogData.getAlarm());
+        pointBuilder.addField("relay", bmv600LogData.getRelay());
+        pointBuilder.addField("battery_voltage", bmv600LogData.getBatteryVoltage());
+        pointBuilder.addField("starter_battery_voltage", bmv600LogData.getStarterBatteryVoltage());
+        pointBuilder.addField("current", bmv600LogData.getCurrent());
+        pointBuilder.addField("state_of_charge", bmv600LogData.getStateOfCharge());
+        pointBuilder.addField("consumed_energy", bmv600LogData.getConsumedEnergy());
+        pointBuilder.addField("time_to_go", bmv600LogData.getTimeToGo());
 
         Point point = pointBuilder.build();
 

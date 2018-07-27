@@ -25,7 +25,12 @@ public class RabbitMqAutoConfigurationCommandLineRunner implements CommandLineRu
     private static final Logger logger = LoggerFactory.getLogger(RabbitMqAutoConfigurationCommandLineRunner.class);
 
     private static final List<MessageType> SUBSCRIBED_MESSAGE_TYPES =
-            Arrays.asList(MessageType.EVENT_USER_CREATED, MessageType.EVENT_DEVICE_CREATED, MessageType.EVENT_CMI_LOGDATA_RECEIVED);
+            Arrays.asList(
+                    MessageType.EVENT_USER_CREATED,
+                    MessageType.EVENT_DEVICE_CREATED,
+                    MessageType.EVENT_CMI_LOGDATA_RECEIVED,
+                    MessageType.EVENT_BMV_600_LOGDATA_RECEIVED
+            );
 
     private final RabbitConfiguration rabbitConfiguration;
     private final AmqpAdmin           amqpAdmin;

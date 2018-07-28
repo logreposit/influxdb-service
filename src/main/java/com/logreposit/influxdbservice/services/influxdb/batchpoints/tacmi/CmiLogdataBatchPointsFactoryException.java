@@ -8,9 +8,4 @@ public class CmiLogdataBatchPointsFactoryException extends BatchPointsFactoryExc
     {
         super(message);
     }
-
-    public CmiLogdataBatchPointsFactoryException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
 }

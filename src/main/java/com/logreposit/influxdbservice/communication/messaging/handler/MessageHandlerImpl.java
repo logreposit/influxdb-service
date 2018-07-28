@@ -5,6 +5,7 @@ import com.logreposit.influxdbservice.communication.messaging.common.MessageType
 import com.logreposit.influxdbservice.communication.messaging.exceptions.MessagingException;
 import com.logreposit.influxdbservice.communication.messaging.exceptions.NotRetryableMessagingException;
 import com.logreposit.influxdbservice.communication.messaging.exceptions.RetryableMessagingException;
+import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventBMV600LogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventCmiLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventDeviceCreatedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventUserCreatedMessageProcessor;
@@ -21,18 +22,21 @@ public class MessageHandlerImpl implements MessageHandler
 {
     private static final Logger logger = LoggerFactory.getLogger(MessageHandlerImpl.class);
 
-    private final EventUserCreatedMessageProcessor        eventUserCreatedMessageProcessor;
-    private final EventDeviceCreatedMessageProcessor      eventDeviceCreatedMessageProcessor;
-    private final EventCmiLogdataReceivedMessageProcessor eventCmiLogdataReceivedMessageProcessor;
+    private final EventUserCreatedMessageProcessor           eventUserCreatedMessageProcessor;
+    private final EventDeviceCreatedMessageProcessor         eventDeviceCreatedMessageProcessor;
+    private final EventCmiLogdataReceivedMessageProcessor    eventCmiLogdataReceivedMessageProcessor;
+    private final EventBMV600LogdataReceivedMessageProcessor eventBMV600LogdataReceivedMessageProcessor;
 
     @Autowired
     public MessageHandlerImpl(EventUserCreatedMessageProcessor eventUserCreatedMessageProcessor,
                               EventDeviceCreatedMessageProcessor eventDeviceCreatedMessageProcessor,
-                              EventCmiLogdataReceivedMessageProcessor eventCmiLogdataReceivedMessageProcessor)
+                              EventCmiLogdataReceivedMessageProcessor eventCmiLogdataReceivedMessageProcessor,
+                              EventBMV600LogdataReceivedMessageProcessor eventBMV600LogdataReceivedMessageProcessor)
     {
-        this.eventUserCreatedMessageProcessor        = eventUserCreatedMessageProcessor;
-        this.eventDeviceCreatedMessageProcessor      = eventDeviceCreatedMessageProcessor;
-        this.eventCmiLogdataReceivedMessageProcessor = eventCmiLogdataReceivedMessageProcessor;
+        this.eventUserCreatedMessageProcessor           = eventUserCreatedMessageProcessor;
+        this.eventDeviceCreatedMessageProcessor         = eventDeviceCreatedMessageProcessor;
+        this.eventCmiLogdataReceivedMessageProcessor    = eventCmiLogdataReceivedMessageProcessor;
+        this.eventBMV600LogdataReceivedMessageProcessor = eventBMV600LogdataReceivedMessageProcessor;
     }
 
     @Override
@@ -49,6 +53,9 @@ public class MessageHandlerImpl implements MessageHandler
         {
             case EVENT_CMI_LOGDATA_RECEIVED:
                 this.eventCmiLogdataReceivedMessageProcessor.processMessage(message);
+                break;
+            case EVENT_BMV_600_LOGDATA_RECEIVED:
+                this.eventBMV600LogdataReceivedMessageProcessor.processMessage(message);
                 break;
             case EVENT_USER_CREATED:
                 this.eventUserCreatedMessageProcessor.processMessage(message);

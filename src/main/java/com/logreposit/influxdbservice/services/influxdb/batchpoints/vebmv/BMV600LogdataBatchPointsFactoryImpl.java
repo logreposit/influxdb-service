@@ -1,6 +1,7 @@
 package com.logreposit.influxdbservice.services.influxdb.batchpoints.vebmv;
 
 import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.vebmv.BMV600LogData;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
@@ -32,10 +33,12 @@ public class BMV600LogdataBatchPointsFactoryImpl implements BMV600LogdataBatchPo
     private static Point getPoint(BMV600LogData bmv600LogData)
     {
         long          unixTimestamp = bmv600LogData.getDate().getTime();
-        Point.Builder pointBuilder  = Point.measurement(MEASUREMENT_NAME).time(unixTimestamp, TimeUnit.MILLISECONDS);
+        Point.Builder pointBuilder = Point.measurement(MEASUREMENT_NAME).time(unixTimestamp, TimeUnit.MILLISECONDS);
+        int           alarm        = convertBooleanToInt(bmv600LogData.getAlarm());
+        int           relay        = convertBooleanToInt(bmv600LogData.getRelay());
 
-        pointBuilder.addField("alarm", bmv600LogData.getAlarm());
-        pointBuilder.addField("relay", bmv600LogData.getRelay());
+        pointBuilder.addField("alarm", alarm);
+        pointBuilder.addField("relay", relay);
         pointBuilder.addField("battery_voltage", bmv600LogData.getBatteryVoltage());
         pointBuilder.addField("starter_battery_voltage", bmv600LogData.getStarterBatteryVoltage());
         pointBuilder.addField("current", bmv600LogData.getCurrent());
@@ -67,5 +70,13 @@ public class BMV600LogdataBatchPointsFactoryImpl implements BMV600LogdataBatchPo
             logger.error("bmv600LogData.date is null!");
             throw new BMV600LogdataBatchPointsFactoryException("cmiLogData.date is null!");
         }
+    }
+
+    private static int convertBooleanToInt(Boolean value)
+    {
+        boolean bool         = BooleanUtils.isTrue(value);
+        int     integerValue = bool ? 1 : 0;
+
+        return integerValue;
     }
 }

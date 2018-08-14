@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class LacrosseTXLogdataBatchPointsFactoryImpl implements LacrosseTXLogdataBatchPointsFactory
 {
+    private static final String MEASUREMENT_NAME = "data";
+
     private static final Logger logger = LoggerFactory.getLogger(LacrosseTXLogdataBatchPointsFactoryImpl.class);
 
     @Override
@@ -73,7 +75,7 @@ public class LacrosseTXLogdataBatchPointsFactoryImpl implements LacrosseTXLogdat
         long                unixTimestamp = lacrosseTXLogData.getDate().getTime();
         Map<String, String> tags          = createTags(lacrosseTXLogData);
 
-        Point.Builder pointBuilder = Point.measurement("measurement")
+        Point.Builder pointBuilder = Point.measurement(MEASUREMENT_NAME)
                                           .time(unixTimestamp, TimeUnit.MILLISECONDS)
                                           .tag(tags);
 

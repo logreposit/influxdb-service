@@ -8,6 +8,7 @@ import com.logreposit.influxdbservice.communication.messaging.exceptions.Retryab
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventBMV600LogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventCmiLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventDeviceCreatedMessageProcessor;
+import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventLacrosseTXLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventUserCreatedMessageProcessor;
 import com.logreposit.influxdbservice.utils.RequestCorrelation;
 import com.logreposit.influxdbservice.utils.logging.LoggingUtils;
@@ -22,21 +23,24 @@ public class MessageHandlerImpl implements MessageHandler
 {
     private static final Logger logger = LoggerFactory.getLogger(MessageHandlerImpl.class);
 
-    private final EventUserCreatedMessageProcessor           eventUserCreatedMessageProcessor;
-    private final EventDeviceCreatedMessageProcessor         eventDeviceCreatedMessageProcessor;
-    private final EventCmiLogdataReceivedMessageProcessor    eventCmiLogdataReceivedMessageProcessor;
-    private final EventBMV600LogdataReceivedMessageProcessor eventBMV600LogdataReceivedMessageProcessor;
+    private final EventUserCreatedMessageProcessor               eventUserCreatedMessageProcessor;
+    private final EventDeviceCreatedMessageProcessor             eventDeviceCreatedMessageProcessor;
+    private final EventCmiLogdataReceivedMessageProcessor        eventCmiLogdataReceivedMessageProcessor;
+    private final EventBMV600LogdataReceivedMessageProcessor     eventBMV600LogdataReceivedMessageProcessor;
+    private final EventLacrosseTXLogdataReceivedMessageProcessor eventLacrosseTXLogdataReceivedMessageProcessor;
 
     @Autowired
     public MessageHandlerImpl(EventUserCreatedMessageProcessor eventUserCreatedMessageProcessor,
                               EventDeviceCreatedMessageProcessor eventDeviceCreatedMessageProcessor,
                               EventCmiLogdataReceivedMessageProcessor eventCmiLogdataReceivedMessageProcessor,
-                              EventBMV600LogdataReceivedMessageProcessor eventBMV600LogdataReceivedMessageProcessor)
+                              EventBMV600LogdataReceivedMessageProcessor eventBMV600LogdataReceivedMessageProcessor,
+                              EventLacrosseTXLogdataReceivedMessageProcessor eventLacrosseTXLogdataReceivedMessageProcessor)
     {
-        this.eventUserCreatedMessageProcessor           = eventUserCreatedMessageProcessor;
-        this.eventDeviceCreatedMessageProcessor         = eventDeviceCreatedMessageProcessor;
-        this.eventCmiLogdataReceivedMessageProcessor    = eventCmiLogdataReceivedMessageProcessor;
-        this.eventBMV600LogdataReceivedMessageProcessor = eventBMV600LogdataReceivedMessageProcessor;
+        this.eventUserCreatedMessageProcessor               = eventUserCreatedMessageProcessor;
+        this.eventDeviceCreatedMessageProcessor             = eventDeviceCreatedMessageProcessor;
+        this.eventCmiLogdataReceivedMessageProcessor        = eventCmiLogdataReceivedMessageProcessor;
+        this.eventBMV600LogdataReceivedMessageProcessor     = eventBMV600LogdataReceivedMessageProcessor;
+        this.eventLacrosseTXLogdataReceivedMessageProcessor = eventLacrosseTXLogdataReceivedMessageProcessor;
     }
 
     @Override
@@ -62,6 +66,9 @@ public class MessageHandlerImpl implements MessageHandler
                 break;
             case EVENT_DEVICE_CREATED:
                 this.eventDeviceCreatedMessageProcessor.processMessage(message);
+                break;
+            case EVENT_LACROSSE_TX_LOGDATA_RECEIVED:
+                this.eventLacrosseTXLogdataReceivedMessageProcessor.processMessage(message);
                 break;
             default:
                 logger.info("No handler for MessageType '{}' existent. Skipping that one.", messageType.toString());

@@ -60,6 +60,12 @@ public class LacrosseTXLogdataBatchPointsFactoryImpl implements LacrosseTXLogdat
             logger.error("lacrosseTXLogData.sensorId is null!");
             throw new LacrosseTXLogdataBatchPointsFactoryException("lacrosseTXLogData.sensorId is null!");
         }
+
+        if (StringUtils.isBlank(lacrosseTXLogData.getSensorModel()))
+        {
+            logger.error("lacrosseTXLogData.sensorModel is blank!");
+            throw new LacrosseTXLogdataBatchPointsFactoryException("lacrosseTXLogData.sensorModel is blank!");
+        }
     }
 
     private static Point createPoint(LacrosseTXLogData lacrosseTXLogData)
@@ -78,11 +84,11 @@ public class LacrosseTXLogdataBatchPointsFactoryImpl implements LacrosseTXLogdat
             pointBuilder.addField("battery_new", integerValue);
         }
 
-        if (lacrosseTXLogData.getBatteryLow() != null)
+        if (lacrosseTXLogData.getBatteryOk() != null)
         {
-            int integerValue = lacrosseTXLogData.getBatteryLow() ? 1 : 0;
+            int integerValue = lacrosseTXLogData.getBatteryOk() ? 1 : 0;
 
-            pointBuilder.addField("battery_low", integerValue);
+            pointBuilder.addField("battery_ok", integerValue);
         }
 
         if (lacrosseTXLogData.getTemperature() != null)
@@ -106,6 +112,7 @@ public class LacrosseTXLogdataBatchPointsFactoryImpl implements LacrosseTXLogdat
 
         tags.put("location", lacrosseTXLogData.getLocation());
         tags.put("sensor_id", String.valueOf(lacrosseTXLogData.getSensorId()));
+        tags.put("sensor_model", lacrosseTXLogData.getSensorModel());
 
         return tags;
     }

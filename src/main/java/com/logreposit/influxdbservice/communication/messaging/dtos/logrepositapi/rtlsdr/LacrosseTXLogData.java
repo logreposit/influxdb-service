@@ -9,9 +9,10 @@ public class LacrosseTXLogData
 {
     private Date    date;
     private String  location;
+    private String  sensorModel;
     private Integer sensorId;
     private Boolean batteryNew;
-    private Boolean batteryLow;
+    private Boolean batteryOk;
     private Double  temperature;
     private Double  humidity;
 
@@ -35,6 +36,16 @@ public class LacrosseTXLogData
         this.location = location;
     }
 
+    public String getSensorModel()
+    {
+        return this.sensorModel;
+    }
+
+    public void setSensorModel(String sensorModel)
+    {
+        this.sensorModel = sensorModel;
+    }
+
     public Integer getSensorId()
     {
         return this.sensorId;
@@ -55,14 +66,14 @@ public class LacrosseTXLogData
         this.batteryNew = batteryNew;
     }
 
-    public Boolean getBatteryLow()
+    public Boolean getBatteryOk()
     {
-        return this.batteryLow;
+        return this.batteryOk;
     }
 
-    public void setBatteryLow(Boolean batteryLow)
+    public void setBatteryOk(Boolean batteryOk)
     {
-        this.batteryLow = batteryLow;
+        this.batteryOk = batteryOk;
     }
 
     public Double getTemperature()

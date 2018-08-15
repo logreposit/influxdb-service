@@ -35,7 +35,7 @@ public class SolarLogLogdataBatchPointsFactoryImpl implements SolarLogLogdataBat
         Point.Builder pointBuilder  = Point.measurement(MEASUREMENT_NAME).time(unixTimestamp, TimeUnit.MILLISECONDS);
 
         pointBuilder.addField("power_ac", solarLogLogData.getPowerAc());
-        pointBuilder.addField("power_cd", solarLogLogData.getPowerDc());
+        pointBuilder.addField("power_dc", solarLogLogData.getPowerDc());
         pointBuilder.addField("voltage_ac", solarLogLogData.getVoltageAc());
         pointBuilder.addField("voltage_dc", solarLogLogData.getVoltageDc());
         pointBuilder.addField("yield_day", solarLogLogData.getYieldDay());

@@ -25,9 +25,9 @@ public class CmiLogdataBatchPointsFactoryImpl implements CmiLogdataBatchPointsFa
 {
     private static final Logger logger = LoggerFactory.getLogger(CmiLogdataBatchPointsFactoryImpl.class);
 
-    private static final String INPUT_MEASUREMENT_NAME = "input";
-    private static final String OUTPUT_MEASUREMENT_NAME = "output";
-    private static final String ANALOG_LOGGING_MEASUREMENT_NAME = "analog_logging";
+    private static final String INPUT_MEASUREMENT_NAME           = "input";
+    private static final String OUTPUT_MEASUREMENT_NAME          = "output";
+    private static final String ANALOG_LOGGING_MEASUREMENT_NAME  = "analog_logging";
     private static final String DIGITAL_LOGGING_MEASUREMENT_NAME = "digital_logging";
 
     @Override
@@ -71,8 +71,8 @@ public class CmiLogdataBatchPointsFactoryImpl implements CmiLogdataBatchPointsFa
 
     private static List<Point> createPoints(CmiLogData cmiLogData)
     {
-        List<Point> points = new ArrayList<>();
-        long unixTimestamp = cmiLogData.getDate().getTime();
+        List<Point> points        = new ArrayList<>();
+        long        unixTimestamp = cmiLogData.getDate().getTime();
 
         if (!CollectionUtils.isEmpty(cmiLogData.getInputs()))
         {

@@ -12,7 +12,7 @@ import org.springframework.messaging.handler.annotation.support.MethodArgumentNo
 import org.springframework.messaging.handler.annotation.support.MethodArgumentTypeMismatchException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 @Service
@@ -49,30 +49,31 @@ public class MessageErrorHandlerImpl implements MessageErrorHandler
     private static boolean isNotRetryablePerDefinition(Exception exception)
     {
         if (exception instanceof MessageConversionException)
+        {
             return true;
+        }
 
         if (exception instanceof ClassCastException)
+        {
             return true;
+        }
 
         if (exception instanceof org.springframework.messaging.converter.MessageConversionException)
+        {
             return true;
+        }
 
         if (exception instanceof MethodArgumentNotValidException)
+        {
             return true;
+        }
 
         if (exception instanceof MethodArgumentTypeMismatchException)
+        {
             return true;
+        }
 
         return false;
-    }
-
-    private static Map<String, Object> getHeadersWithNewErrorCountEntry(Long errorCount)
-    {
-        Map<String, Object> headers = new HashMap<>();
-
-        headers.put(MESSAGE_ERROR_COUNT_HEADER_KEY, errorCount);
-
-        return headers;
     }
 
     @Override
@@ -84,7 +85,14 @@ public class MessageErrorHandlerImpl implements MessageErrorHandler
         if (exception instanceof NotRetryableMessagingException || isNotRetryablePerDefinition(exception))
         {
             logger.error("Exception caught is not retryable. Publishing Message into error queue.");
-            this.publishToExchange(ERROR_EXCHANGE_NAME, originQueue, amqpMessage, getHeadersWithNewErrorCountEntry(errorCount));
+
+            this.publishToExchange(
+                    ERROR_EXCHANGE_NAME,
+                    originQueue,
+                    amqpMessage,
+                    Collections.singletonMap(MESSAGE_ERROR_COUNT_HEADER_KEY, errorCount)
+            );
+
             return;
         }
 
@@ -92,7 +100,12 @@ public class MessageErrorHandlerImpl implements MessageErrorHandler
 
         logger.info("Exception caught is retryable. Publishing Message to exchange '{}'.", exchangeName);
 
-        this.publishToExchange(exchangeName, originQueue, amqpMessage, getHeadersWithNewErrorCountEntry(errorCount + 1));
+        this.publishToExchange(
+                exchangeName,
+                originQueue,
+                amqpMessage,
+                Collections.singletonMap(MESSAGE_ERROR_COUNT_HEADER_KEY, errorCount)
+        );
     }
 
     private void publishToExchange(String exchangeName, String routingKey, Message amqpMessage, Map<String, Object> headers)

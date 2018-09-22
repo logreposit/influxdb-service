@@ -41,23 +41,20 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
     {
         try
         {
-            if (amqpMessage.getMessageProperties().getRedelivered())
-                logger.warn("Message is redelivered.");
-
             String  payload = new String(amqpMessage.getBody(), StandardCharsets.UTF_8);
-            Message message = this.convertStringToMessage(payload);
+            Message message = this.parseMessage(payload);
 
             this.messageHandler.handleMessage(message);
         }
         catch (Exception exception)
         {
-            logger.error("Caught Exception while processing AMQP message: {}", LoggingUtils.getLogForException(exception));
+            logger.error("Caught Exception while processing Message: {}", LoggingUtils.getLogForException(exception));
 
             this.messageErrorHandler.handleError(amqpMessage, exception);
         }
     }
 
-    private Message convertStringToMessage(String payload) throws NotRetryableMessagingException
+    private Message parseMessage(String payload) throws NotRetryableMessagingException
     {
         try
         {
@@ -68,6 +65,7 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
         catch (IOException exception)
         {
             logger.error("Unable to deserialize message payload to Message instance: {}", LoggingUtils.getLogForException(exception));
+
             throw new NotRetryableMessagingException("Unable to deserialize AMQP Message Payload to Message instance", exception);
         }
     }

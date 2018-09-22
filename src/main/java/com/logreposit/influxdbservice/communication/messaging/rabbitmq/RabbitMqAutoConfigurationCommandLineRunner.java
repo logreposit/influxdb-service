@@ -29,7 +29,9 @@ public class RabbitMqAutoConfigurationCommandLineRunner implements CommandLineRu
                     MessageType.EVENT_USER_CREATED,
                     MessageType.EVENT_DEVICE_CREATED,
                     MessageType.EVENT_CMI_LOGDATA_RECEIVED,
-                    MessageType.EVENT_BMV_600_LOGDATA_RECEIVED
+                    MessageType.EVENT_BMV_600_LOGDATA_RECEIVED,
+                    MessageType.EVENT_LACROSSE_TX_LOGDATA_RECEIVED,
+                    MessageType.EVENT_SOLARLOG_LOGDATA_RECEIVED
             );
 
     private final RabbitConfiguration rabbitConfiguration;

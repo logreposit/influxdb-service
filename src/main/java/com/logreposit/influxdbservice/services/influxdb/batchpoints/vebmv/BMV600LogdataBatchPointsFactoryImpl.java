@@ -33,9 +33,9 @@ public class BMV600LogdataBatchPointsFactoryImpl implements BMV600LogdataBatchPo
     private static Point getPoint(BMV600LogData bmv600LogData)
     {
         long          unixTimestamp = bmv600LogData.getDate().getTime();
-        Point.Builder pointBuilder = Point.measurement(MEASUREMENT_NAME).time(unixTimestamp, TimeUnit.MILLISECONDS);
-        int           alarm        = convertBooleanToInt(bmv600LogData.getAlarm());
-        int           relay        = convertBooleanToInt(bmv600LogData.getRelay());
+        Point.Builder pointBuilder  = Point.measurement(MEASUREMENT_NAME).time(unixTimestamp, TimeUnit.MILLISECONDS);
+        int           alarm         = convertBooleanToInt(bmv600LogData.getAlarm());
+        int           relay         = convertBooleanToInt(bmv600LogData.getRelay());
 
         pointBuilder.addField("alarm", alarm);
         pointBuilder.addField("relay", relay);
@@ -62,13 +62,13 @@ public class BMV600LogdataBatchPointsFactoryImpl implements BMV600LogdataBatchPo
         if (bmv600LogData == null)
         {
             logger.error("bmv600LogData is null!");
-            throw new BMV600LogdataBatchPointsFactoryException("cmiLogData is null!");
+            throw new BMV600LogdataBatchPointsFactoryException("bmv600LogData is null!");
         }
 
         if (bmv600LogData.getDate() == null)
         {
             logger.error("bmv600LogData.date is null!");
-            throw new BMV600LogdataBatchPointsFactoryException("cmiLogData.date is null!");
+            throw new BMV600LogdataBatchPointsFactoryException("bmv600LogData.date is null!");
         }
     }
 

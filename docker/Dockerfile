@@ -1,6 +1,6 @@
 FROM openjdk:11-jre
 
-WORKDIR /opt/logreposit-influxdb-service
+WORKDIR /opt/logreposit/logreposit-influxdb-service
 
 COPY run.sh    /opt/logreposit/logreposit-influxdb-service/run.sh
 COPY app.jar   /opt/logreposit/logreposit-influxdb-service/app.jar

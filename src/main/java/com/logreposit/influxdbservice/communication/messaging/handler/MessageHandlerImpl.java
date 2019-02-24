@@ -7,6 +7,7 @@ import com.logreposit.influxdbservice.communication.messaging.exceptions.NotRetr
 import com.logreposit.influxdbservice.communication.messaging.exceptions.RetryableMessagingException;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventBMV600LogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventCmiLogdataReceivedMessageProcessor;
+import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventCotekSPSeriesLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventDeviceCreatedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventFroelingLambdatronicS3200LogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventLacrosseTXLogdataReceivedMessageProcessor;
@@ -32,6 +33,7 @@ public class MessageHandlerImpl implements MessageHandler
     private final EventLacrosseTXLogdataReceivedMessageProcessor                eventLacrosseTXLogdataReceivedMessageProcessor;
     private final EventSolarLogLogdataReceivedMessageProcessor                  eventSolarLogLogdataReceivedMessageProcessor;
     private final EventFroelingLambdatronicS3200LogdataReceivedMessageProcessor eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor;
+    private final EventCotekSPSeriesLogdataReceivedMessageProcessor             eventCotekSPSeriesLogdataReceivedMessageProcessor;
 
     @Autowired
     public MessageHandlerImpl(EventUserCreatedMessageProcessor eventUserCreatedMessageProcessor,
@@ -40,7 +42,8 @@ public class MessageHandlerImpl implements MessageHandler
                               EventBMV600LogdataReceivedMessageProcessor eventBMV600LogdataReceivedMessageProcessor,
                               EventLacrosseTXLogdataReceivedMessageProcessor eventLacrosseTXLogdataReceivedMessageProcessor,
                               EventSolarLogLogdataReceivedMessageProcessor eventSolarLogLogdataReceivedMessageProcessor,
-                              EventFroelingLambdatronicS3200LogdataReceivedMessageProcessor eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor)
+                              EventFroelingLambdatronicS3200LogdataReceivedMessageProcessor eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor,
+                              EventCotekSPSeriesLogdataReceivedMessageProcessor eventCotekSPSeriesLogdataReceivedMessageProcessor)
     {
         this.eventUserCreatedMessageProcessor                              = eventUserCreatedMessageProcessor;
         this.eventDeviceCreatedMessageProcessor                            = eventDeviceCreatedMessageProcessor;
@@ -49,6 +52,7 @@ public class MessageHandlerImpl implements MessageHandler
         this.eventLacrosseTXLogdataReceivedMessageProcessor                = eventLacrosseTXLogdataReceivedMessageProcessor;
         this.eventSolarLogLogdataReceivedMessageProcessor                  = eventSolarLogLogdataReceivedMessageProcessor;
         this.eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor = eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor;
+        this.eventCotekSPSeriesLogdataReceivedMessageProcessor             = eventCotekSPSeriesLogdataReceivedMessageProcessor;
     }
 
     @Override
@@ -83,6 +87,9 @@ public class MessageHandlerImpl implements MessageHandler
                 break;
             case EVENT_FROELING_LAMBDATRONIC_S3200_LOGDATA_RECEIVED:
                 this.eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor.processMessage(message);
+                break;
+            case EVENT_COTEK_SP_SERIES_LOGDATA_RECEIVED:
+                this.eventCotekSPSeriesLogdataReceivedMessageProcessor.processMessage(message);
                 break;
             default:
                 logger.info("No handler for MessageType '{}' existent. Skipping that one.", messageType.toString());

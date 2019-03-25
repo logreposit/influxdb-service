@@ -6,6 +6,7 @@ import com.logreposit.influxdbservice.communication.messaging.exceptions.Messagi
 import com.logreposit.influxdbservice.communication.messaging.exceptions.NotRetryableMessagingException;
 import com.logreposit.influxdbservice.communication.messaging.exceptions.RetryableMessagingException;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventBMV600LogdataReceivedMessageProcessor;
+import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventCCS811LogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventCmiLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventCotekSPSeriesLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventDeviceCreatedMessageProcessor;
@@ -34,6 +35,7 @@ public class MessageHandlerImpl implements MessageHandler
     private final EventSolarLogLogdataReceivedMessageProcessor                  eventSolarLogLogdataReceivedMessageProcessor;
     private final EventFroelingLambdatronicS3200LogdataReceivedMessageProcessor eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor;
     private final EventCotekSPSeriesLogdataReceivedMessageProcessor             eventCotekSPSeriesLogdataReceivedMessageProcessor;
+    private final EventCCS811LogdataReceivedMessageProcessor                    eventCCS811LogdataReceivedMessageProcessor;
 
     @Autowired
     public MessageHandlerImpl(EventUserCreatedMessageProcessor eventUserCreatedMessageProcessor,
@@ -43,7 +45,8 @@ public class MessageHandlerImpl implements MessageHandler
                               EventLacrosseTXLogdataReceivedMessageProcessor eventLacrosseTXLogdataReceivedMessageProcessor,
                               EventSolarLogLogdataReceivedMessageProcessor eventSolarLogLogdataReceivedMessageProcessor,
                               EventFroelingLambdatronicS3200LogdataReceivedMessageProcessor eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor,
-                              EventCotekSPSeriesLogdataReceivedMessageProcessor eventCotekSPSeriesLogdataReceivedMessageProcessor)
+                              EventCotekSPSeriesLogdataReceivedMessageProcessor eventCotekSPSeriesLogdataReceivedMessageProcessor,
+                              EventCCS811LogdataReceivedMessageProcessor eventCCS811LogdataReceivedMessageProcessor)
     {
         this.eventUserCreatedMessageProcessor                              = eventUserCreatedMessageProcessor;
         this.eventDeviceCreatedMessageProcessor                            = eventDeviceCreatedMessageProcessor;
@@ -53,6 +56,7 @@ public class MessageHandlerImpl implements MessageHandler
         this.eventSolarLogLogdataReceivedMessageProcessor                  = eventSolarLogLogdataReceivedMessageProcessor;
         this.eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor = eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor;
         this.eventCotekSPSeriesLogdataReceivedMessageProcessor             = eventCotekSPSeriesLogdataReceivedMessageProcessor;
+        this.eventCCS811LogdataReceivedMessageProcessor                    = eventCCS811LogdataReceivedMessageProcessor;
     }
 
     @Override
@@ -90,6 +94,9 @@ public class MessageHandlerImpl implements MessageHandler
                 break;
             case EVENT_COTEK_SP_SERIES_LOGDATA_RECEIVED:
                 this.eventCotekSPSeriesLogdataReceivedMessageProcessor.processMessage(message);
+                break;
+            case EVENT_CCS811_LOGDATA_RECEIVED:
+                this.eventCCS811LogdataReceivedMessageProcessor.processMessage(message);
                 break;
             default:
                 logger.info("No handler for MessageType '{}' existent. Skipping that one.", messageType.toString());

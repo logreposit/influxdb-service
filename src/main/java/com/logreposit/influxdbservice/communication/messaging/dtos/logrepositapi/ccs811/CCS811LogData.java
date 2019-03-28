@@ -10,6 +10,7 @@ public class CCS811LogData
     private Date date;
     private Integer eco2;
     private Integer tvoc;
+    private Double temperature;
 
     public Date getDate()
     {
@@ -39,5 +40,15 @@ public class CCS811LogData
     public void setTvoc(Integer tvoc)
     {
         this.tvoc = tvoc;
+    }
+
+    public Double getTemperature()
+    {
+        return this.temperature;
+    }
+
+    public void setTemperature(Double temperature)
+    {
+        this.temperature = temperature;
     }
 }

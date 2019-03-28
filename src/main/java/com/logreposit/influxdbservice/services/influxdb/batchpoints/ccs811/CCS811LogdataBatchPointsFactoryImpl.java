@@ -70,6 +70,11 @@ public class CCS811LogdataBatchPointsFactoryImpl implements CCS811LogdataBatchPo
         pointBuilder.addField("eco2", ccs811LogData.getEco2());
         pointBuilder.addField("tvoc", ccs811LogData.getTvoc());
 
+        if (ccs811LogData.getTemperature() != null)
+        {
+            pointBuilder.addField("temperature", ccs811LogData.getTvoc());
+        }
+
         Point point = pointBuilder.build();
 
         return point;

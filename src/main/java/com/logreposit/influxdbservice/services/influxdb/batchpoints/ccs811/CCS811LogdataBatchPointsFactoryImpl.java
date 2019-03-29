@@ -72,7 +72,7 @@ public class CCS811LogdataBatchPointsFactoryImpl implements CCS811LogdataBatchPo
 
         if (ccs811LogData.getTemperature() != null)
         {
-            pointBuilder.addField("temperature", ccs811LogData.getTvoc());
+            pointBuilder.addField("temperature", ccs811LogData.getTemperature());
         }
 
         Point point = pointBuilder.build();

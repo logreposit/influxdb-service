@@ -52,13 +52,13 @@ public class CCS811LogdataBatchPointsFactoryImpl implements CCS811LogdataBatchPo
         if (ccs811LogData.getEco2() == null)
         {
             logger.error("ccs811LogData.inputVoltage is null!");
-            throw new CCS811LogdataBatchPointsFactoryException("ccs811LogData.inputVoltage is null!");
+            throw new CCS811LogdataBatchPointsFactoryException("ccs811LogData.eco2 is null!");
         }
 
         if (ccs811LogData.getTvoc() == null)
         {
             logger.error("ccs811LogData.outputVoltage is null!");
-            throw new CCS811LogdataBatchPointsFactoryException("ccs811LogData.outputVoltage is null!");
+            throw new CCS811LogdataBatchPointsFactoryException("ccs811LogData.tvoc is null!");
         }
     }
 

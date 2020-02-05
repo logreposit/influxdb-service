@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -43,10 +45,16 @@ public class DHTLogdataBatchPointsFactoryImpl implements DHTLogdataBatchPointsFa
             throw new DHTLogdataBatchPointsFactoryException("dhtLogData is null!");
         }
 
+        if (dhtLogData.getLocation() == null)
+        {
+            logger.error("dhtLogData.location is null!");
+            throw new DHTLogdataBatchPointsFactoryException("dhtLogData.location is null!");
+        }
+
         if (dhtLogData.getDate() == null)
         {
             logger.error("dhtLogData.date is null!");
-            throw new DHTLogdataBatchPointsFactoryException("ccs811LogData.date is null!");
+            throw new DHTLogdataBatchPointsFactoryException("dhtLogData.date is null!");
         }
 
         if (dhtLogData.getTemperature() == null)
@@ -64,8 +72,11 @@ public class DHTLogdataBatchPointsFactoryImpl implements DHTLogdataBatchPointsFa
 
     private static Point createPoint(DHTLogData dhtLogData)
     {
-        long          unixTimestamp = dhtLogData.getDate().getTime();
-        Point.Builder pointBuilder  = Point.measurement(MEASUREMENT_NAME).time(unixTimestamp, TimeUnit.MILLISECONDS);
+        long unixTimestamp = dhtLogData.getDate().getTime();
+
+        Point.Builder pointBuilder  = Point.measurement(MEASUREMENT_NAME)
+                                           .time(unixTimestamp, TimeUnit.MILLISECONDS)
+                                           .tag(createTags(dhtLogData));
 
         pointBuilder.addField("humidity", dhtLogData.getHumidity());
         pointBuilder.addField("temperature", dhtLogData.getTemperature());
@@ -73,5 +84,14 @@ public class DHTLogdataBatchPointsFactoryImpl implements DHTLogdataBatchPointsFa
         Point point = pointBuilder.build();
 
         return point;
+    }
+
+    private static Map<String, String> createTags(DHTLogData dhtLogData)
+    {
+        Map<String, String> tags = new HashMap<>();
+
+        tags.put("location", dhtLogData.getLocation());
+
+        return tags;
     }
 }

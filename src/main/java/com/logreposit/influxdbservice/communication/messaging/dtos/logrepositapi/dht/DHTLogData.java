@@ -8,6 +8,7 @@ import java.util.Date;
 public class DHTLogData
 {
     private Date date;
+    private String location;
     private Double humidity;
     private Double temperature;
 
@@ -19,6 +20,16 @@ public class DHTLogData
     public void setDate(Date date)
     {
         this.date = date;
+    }
+
+    public String getLocation()
+    {
+        return this.location;
+    }
+
+    public void setLocation(String location)
+    {
+        this.location = location;
     }
 
     public Double getHumidity()

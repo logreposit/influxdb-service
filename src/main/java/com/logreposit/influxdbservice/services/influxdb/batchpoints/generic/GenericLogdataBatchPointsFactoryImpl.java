@@ -5,6 +5,7 @@ import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi
 import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.generic.IntegerFieldDto;
 import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.generic.ReadingDto;
 import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.generic.StringFieldDto;
+import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.generic.TagDto;
 import org.apache.commons.lang3.StringUtils;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
@@ -13,7 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 public class GenericLogdataBatchPointsFactoryImpl implements GenericLogdataBatchPointsFactory
@@ -49,9 +52,13 @@ public class GenericLogdataBatchPointsFactoryImpl implements GenericLogdataBatch
     {
         long unixTimestamp = reading.getDate().toEpochMilli();
 
+        final Map<String, String> tags = reading.getTags()
+                                                .stream()
+                                                .collect(Collectors.toMap(TagDto::getName, TagDto::getValue));
+
         Point.Builder pointBuilder  = Point.measurement(reading.getMeasurement())
                                            .time(unixTimestamp, TimeUnit.MILLISECONDS)
-                                           .tag(reading.getTags());
+                                           .tag(tags);
 
         for (FieldDto field : reading.getFields()) {
             if (field instanceof FloatFieldDto) {

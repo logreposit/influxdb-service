@@ -62,7 +62,7 @@ public class EventGenericLogdataReceivedMessageProcessor extends AbstractMessage
         }
         catch (GenericLogdataBatchPointsFactoryException exception)
         {
-            logger.error("Caught GenericLogdataBatchPointsFactoryException while preparing data for insertion into DB: {}", LoggingUtils.getLogForException(exception));
+            logger.error("Caught GenericLogdataBatchPointsFactoryException while preparing data for insertion into DB", exception);
             throw new RetryableMessagingException("Caught GenericLogdataBatchPointsFactoryException while preparing data for insertion into DB", exception);
         }
     }

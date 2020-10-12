@@ -12,6 +12,7 @@ import com.logreposit.influxdbservice.communication.messaging.handler.processors
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventDHTLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventDeviceCreatedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventFroelingLambdatronicS3200LogdataReceivedMessageProcessor;
+import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventGenericLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventLacrosseTXLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventSolarLogLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventUserCreatedMessageProcessor;
@@ -38,6 +39,7 @@ public class MessageHandlerImpl implements MessageHandler
     private final EventCotekSPSeriesLogdataReceivedMessageProcessor             eventCotekSPSeriesLogdataReceivedMessageProcessor;
     private final EventCCS811LogdataReceivedMessageProcessor                    eventCCS811LogdataReceivedMessageProcessor;
     private final EventDHTLogdataReceivedMessageProcessor                       eventDHTLogdataReceivedMessageProcessor;
+    private final EventGenericLogdataReceivedMessageProcessor                   eventGenericLogdataReceivedMessageProcessor;
 
     @Autowired
     public MessageHandlerImpl(EventUserCreatedMessageProcessor eventUserCreatedMessageProcessor,
@@ -49,7 +51,8 @@ public class MessageHandlerImpl implements MessageHandler
                               EventFroelingLambdatronicS3200LogdataReceivedMessageProcessor eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor,
                               EventCotekSPSeriesLogdataReceivedMessageProcessor eventCotekSPSeriesLogdataReceivedMessageProcessor,
                               EventCCS811LogdataReceivedMessageProcessor eventCCS811LogdataReceivedMessageProcessor,
-                              EventDHTLogdataReceivedMessageProcessor eventDHTLogdataReceivedMessageProcessor)
+                              EventDHTLogdataReceivedMessageProcessor eventDHTLogdataReceivedMessageProcessor,
+                              EventGenericLogdataReceivedMessageProcessor eventGenericLogdataReceivedMessageProcessor)
     {
         this.eventUserCreatedMessageProcessor                              = eventUserCreatedMessageProcessor;
         this.eventDeviceCreatedMessageProcessor                            = eventDeviceCreatedMessageProcessor;
@@ -61,6 +64,7 @@ public class MessageHandlerImpl implements MessageHandler
         this.eventCotekSPSeriesLogdataReceivedMessageProcessor             = eventCotekSPSeriesLogdataReceivedMessageProcessor;
         this.eventCCS811LogdataReceivedMessageProcessor                    = eventCCS811LogdataReceivedMessageProcessor;
         this.eventDHTLogdataReceivedMessageProcessor                       = eventDHTLogdataReceivedMessageProcessor;
+        this.eventGenericLogdataReceivedMessageProcessor                   = eventGenericLogdataReceivedMessageProcessor;
     }
 
     @Override
@@ -104,6 +108,9 @@ public class MessageHandlerImpl implements MessageHandler
                 break;
             case EVENT_DHT_LOGDATA_RECEIVED:
                 this.eventDHTLogdataReceivedMessageProcessor.processMessage(message);
+                break;
+            case EVENT_GENERIC_LOGDATA_RECEIVED:
+                this.eventGenericLogdataReceivedMessageProcessor.processMessage(message);
                 break;
             default:
                 logger.info("No handler for MessageType '{}' existent. Skipping that one.", messageType.toString());

@@ -2,12 +2,16 @@ package com.logreposit.influxdbservice.communication.messaging.dtos.logrepositap
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.tacmi.enums.DeviceType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Getter
+@Setter
 public class CmiLogData
 {
     private Date                      date;
@@ -23,65 +27,5 @@ public class CmiLogData
         this.outputs              = new ArrayList<>();
         this.analogLoggingValues  = new ArrayList<>();
         this.digitalLoggingValues = new ArrayList<>();
-    }
-
-    public Date getDate()
-    {
-        return this.date;
-    }
-
-    public void setDate(Date date)
-    {
-        this.date = date;
-    }
-
-    public DeviceType getDeviceType()
-    {
-        return this.deviceType;
-    }
-
-    public void setDeviceType(DeviceType deviceType)
-    {
-        this.deviceType = deviceType;
-    }
-
-    public List<Input> getInputs()
-    {
-        return this.inputs;
-    }
-
-    public void setInputs(List<Input> inputs)
-    {
-        this.inputs = inputs;
-    }
-
-    public List<Output> getOutputs()
-    {
-        return this.outputs;
-    }
-
-    public void setOutputs(List<Output> outputs)
-    {
-        this.outputs = outputs;
-    }
-
-    public List<AnalogLoggingValue> getAnalogLoggingValues()
-    {
-        return this.analogLoggingValues;
-    }
-
-    public void setAnalogLoggingValues(List<AnalogLoggingValue> analogLoggingValues)
-    {
-        this.analogLoggingValues = analogLoggingValues;
-    }
-
-    public List<DigitalLoggingValue> getDigitalLoggingValues()
-    {
-        return this.digitalLoggingValues;
-    }
-
-    public void setDigitalLoggingValues(List<DigitalLoggingValue> digitalLoggingValues)
-    {
-        this.digitalLoggingValues = digitalLoggingValues;
     }
 }

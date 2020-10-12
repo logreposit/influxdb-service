@@ -17,3 +17,5 @@ docker/app.jar
 *.iws
 *.iml
 *.ipr
+
+/*.versionsBackup

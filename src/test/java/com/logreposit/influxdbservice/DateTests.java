@@ -36,4 +36,9 @@ public class DateTests
         System.out.print("");
 
     }
+
+    @Test
+    public void testTests() {
+        // TODO!
+    }
 }

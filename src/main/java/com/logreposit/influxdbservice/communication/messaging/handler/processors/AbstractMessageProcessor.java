@@ -1,5 +1,6 @@
 package com.logreposit.influxdbservice.communication.messaging.handler.processors;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logreposit.influxdbservice.communication.messaging.common.Message;
 import com.logreposit.influxdbservice.communication.messaging.exceptions.NotRetryableMessagingException;
@@ -13,11 +14,28 @@ public abstract class AbstractMessageProcessor<T> implements MessageProcessor
 {
     private static final Logger logger = LoggerFactory.getLogger(AbstractMessageProcessor.class);
 
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     public AbstractMessageProcessor(ObjectMapper objectMapper)
     {
         this.objectMapper = objectMapper;
+    }
+
+    protected T getMessagePayload(Message message, TypeReference<T> typeReference) throws NotRetryableMessagingException
+    {
+        try
+        {
+            T payload = this.objectMapper.readValue(message.getPayload(), typeReference);
+
+            logger.info("Successfully deserialized Message Payload into {} instance: {}", typeReference.toString(), LoggingUtils.serialize(payload));
+
+            return payload;
+        }
+        catch (IOException exception)
+        {
+            logger.error("Unable to deserialize Message payload to instance of '{}'.", typeReference.toString());
+            throw new NotRetryableMessagingException(String.format("Unable to deserialize Message payload to instance of '%s'", typeReference.toString()), exception);
+        }
     }
 
     protected T getMessagePayload(Message message, Class<T> clazz) throws NotRetryableMessagingException

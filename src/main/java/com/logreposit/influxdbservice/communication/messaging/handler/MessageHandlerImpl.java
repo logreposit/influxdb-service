@@ -6,8 +6,13 @@ import com.logreposit.influxdbservice.communication.messaging.exceptions.Messagi
 import com.logreposit.influxdbservice.communication.messaging.exceptions.NotRetryableMessagingException;
 import com.logreposit.influxdbservice.communication.messaging.exceptions.RetryableMessagingException;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventBMV600LogdataReceivedMessageProcessor;
+import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventCCS811LogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventCmiLogdataReceivedMessageProcessor;
+import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventCotekSPSeriesLogdataReceivedMessageProcessor;
+import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventDHTLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventDeviceCreatedMessageProcessor;
+import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventFroelingLambdatronicS3200LogdataReceivedMessageProcessor;
+import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventGenericLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventLacrosseTXLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventSolarLogLogdataReceivedMessageProcessor;
 import com.logreposit.influxdbservice.communication.messaging.handler.processors.logreposit_api.EventUserCreatedMessageProcessor;
@@ -24,12 +29,17 @@ public class MessageHandlerImpl implements MessageHandler
 {
     private static final Logger logger = LoggerFactory.getLogger(MessageHandlerImpl.class);
 
-    private final EventUserCreatedMessageProcessor               eventUserCreatedMessageProcessor;
-    private final EventDeviceCreatedMessageProcessor             eventDeviceCreatedMessageProcessor;
-    private final EventCmiLogdataReceivedMessageProcessor        eventCmiLogdataReceivedMessageProcessor;
-    private final EventBMV600LogdataReceivedMessageProcessor     eventBMV600LogdataReceivedMessageProcessor;
-    private final EventLacrosseTXLogdataReceivedMessageProcessor eventLacrosseTXLogdataReceivedMessageProcessor;
-    private final EventSolarLogLogdataReceivedMessageProcessor   eventSolarLogLogdataReceivedMessageProcessor;
+    private final EventUserCreatedMessageProcessor                              eventUserCreatedMessageProcessor;
+    private final EventDeviceCreatedMessageProcessor                            eventDeviceCreatedMessageProcessor;
+    private final EventCmiLogdataReceivedMessageProcessor                       eventCmiLogdataReceivedMessageProcessor;
+    private final EventBMV600LogdataReceivedMessageProcessor                    eventBMV600LogdataReceivedMessageProcessor;
+    private final EventLacrosseTXLogdataReceivedMessageProcessor                eventLacrosseTXLogdataReceivedMessageProcessor;
+    private final EventSolarLogLogdataReceivedMessageProcessor                  eventSolarLogLogdataReceivedMessageProcessor;
+    private final EventFroelingLambdatronicS3200LogdataReceivedMessageProcessor eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor;
+    private final EventCotekSPSeriesLogdataReceivedMessageProcessor             eventCotekSPSeriesLogdataReceivedMessageProcessor;
+    private final EventCCS811LogdataReceivedMessageProcessor                    eventCCS811LogdataReceivedMessageProcessor;
+    private final EventDHTLogdataReceivedMessageProcessor                       eventDHTLogdataReceivedMessageProcessor;
+    private final EventGenericLogdataReceivedMessageProcessor                   eventGenericLogdataReceivedMessageProcessor;
 
     @Autowired
     public MessageHandlerImpl(EventUserCreatedMessageProcessor eventUserCreatedMessageProcessor,
@@ -37,14 +47,24 @@ public class MessageHandlerImpl implements MessageHandler
                               EventCmiLogdataReceivedMessageProcessor eventCmiLogdataReceivedMessageProcessor,
                               EventBMV600LogdataReceivedMessageProcessor eventBMV600LogdataReceivedMessageProcessor,
                               EventLacrosseTXLogdataReceivedMessageProcessor eventLacrosseTXLogdataReceivedMessageProcessor,
-                              EventSolarLogLogdataReceivedMessageProcessor eventSolarLogLogdataReceivedMessageProcessor)
+                              EventSolarLogLogdataReceivedMessageProcessor eventSolarLogLogdataReceivedMessageProcessor,
+                              EventFroelingLambdatronicS3200LogdataReceivedMessageProcessor eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor,
+                              EventCotekSPSeriesLogdataReceivedMessageProcessor eventCotekSPSeriesLogdataReceivedMessageProcessor,
+                              EventCCS811LogdataReceivedMessageProcessor eventCCS811LogdataReceivedMessageProcessor,
+                              EventDHTLogdataReceivedMessageProcessor eventDHTLogdataReceivedMessageProcessor,
+                              EventGenericLogdataReceivedMessageProcessor eventGenericLogdataReceivedMessageProcessor)
     {
-        this.eventUserCreatedMessageProcessor               = eventUserCreatedMessageProcessor;
-        this.eventDeviceCreatedMessageProcessor             = eventDeviceCreatedMessageProcessor;
-        this.eventCmiLogdataReceivedMessageProcessor        = eventCmiLogdataReceivedMessageProcessor;
-        this.eventBMV600LogdataReceivedMessageProcessor     = eventBMV600LogdataReceivedMessageProcessor;
-        this.eventLacrosseTXLogdataReceivedMessageProcessor = eventLacrosseTXLogdataReceivedMessageProcessor;
-        this.eventSolarLogLogdataReceivedMessageProcessor   = eventSolarLogLogdataReceivedMessageProcessor;
+        this.eventUserCreatedMessageProcessor                              = eventUserCreatedMessageProcessor;
+        this.eventDeviceCreatedMessageProcessor                            = eventDeviceCreatedMessageProcessor;
+        this.eventCmiLogdataReceivedMessageProcessor                       = eventCmiLogdataReceivedMessageProcessor;
+        this.eventBMV600LogdataReceivedMessageProcessor                    = eventBMV600LogdataReceivedMessageProcessor;
+        this.eventLacrosseTXLogdataReceivedMessageProcessor                = eventLacrosseTXLogdataReceivedMessageProcessor;
+        this.eventSolarLogLogdataReceivedMessageProcessor                  = eventSolarLogLogdataReceivedMessageProcessor;
+        this.eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor = eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor;
+        this.eventCotekSPSeriesLogdataReceivedMessageProcessor             = eventCotekSPSeriesLogdataReceivedMessageProcessor;
+        this.eventCCS811LogdataReceivedMessageProcessor                    = eventCCS811LogdataReceivedMessageProcessor;
+        this.eventDHTLogdataReceivedMessageProcessor                       = eventDHTLogdataReceivedMessageProcessor;
+        this.eventGenericLogdataReceivedMessageProcessor                   = eventGenericLogdataReceivedMessageProcessor;
     }
 
     @Override
@@ -77,6 +97,21 @@ public class MessageHandlerImpl implements MessageHandler
             case EVENT_SOLARLOG_LOGDATA_RECEIVED:
                 this.eventSolarLogLogdataReceivedMessageProcessor.processMessage(message);
                 break;
+            case EVENT_FROELING_LAMBDATRONIC_S3200_LOGDATA_RECEIVED:
+                this.eventFroelingLambdatronicS3200LogdataReceivedMessageProcessor.processMessage(message);
+                break;
+            case EVENT_COTEK_SP_SERIES_LOGDATA_RECEIVED:
+                this.eventCotekSPSeriesLogdataReceivedMessageProcessor.processMessage(message);
+                break;
+            case EVENT_CCS811_LOGDATA_RECEIVED:
+                this.eventCCS811LogdataReceivedMessageProcessor.processMessage(message);
+                break;
+            case EVENT_DHT_LOGDATA_RECEIVED:
+                this.eventDHTLogdataReceivedMessageProcessor.processMessage(message);
+                break;
+            case EVENT_GENERIC_LOGDATA_RECEIVED:
+                this.eventGenericLogdataReceivedMessageProcessor.processMessage(message);
+                break;
             default:
                 logger.info("No handler for MessageType '{}' existent. Skipping that one.", messageType.toString());
                 break;
@@ -98,10 +133,14 @@ public class MessageHandlerImpl implements MessageHandler
     private static void checkIfMessageIsValidOrThrowNotRetryableException(Message message) throws NotRetryableMessagingException
     {
         if (message == null)
+        {
             throw new NotRetryableMessagingException("Message received was null.");
+        }
 
         if (StringUtils.isBlank(message.getType()))
+        {
             throw new NotRetryableMessagingException("Message received has blank type string.");
+        }
     }
 
     private static MessageType getTypeOfMessage(Message message) throws RetryableMessagingException

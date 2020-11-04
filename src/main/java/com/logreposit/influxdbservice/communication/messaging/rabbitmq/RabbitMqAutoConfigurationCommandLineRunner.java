@@ -139,9 +139,9 @@ public class RabbitMqAutoConfigurationCommandLineRunner implements CommandLineRu
 
     private void declareBinding(String queueName, String exchangeName, String routingKey)
     {
-        Binding binding = new Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "", new HashMap<>());
+        Binding binding = new Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, routingKey, new HashMap<>());
 
-        logger.info("Declaring binding {} => {} ...", exchangeName, queueName);
+        logger.info("Declaring binding {} == ({}) ==> {} ...", exchangeName, routingKey, queueName);
 
         this.amqpAdmin.declareBinding(binding);
 

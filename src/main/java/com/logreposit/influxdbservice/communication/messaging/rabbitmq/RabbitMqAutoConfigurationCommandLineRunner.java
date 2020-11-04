@@ -24,6 +24,8 @@ public class RabbitMqAutoConfigurationCommandLineRunner implements CommandLineRu
 {
     private static final Logger logger = LoggerFactory.getLogger(RabbitMqAutoConfigurationCommandLineRunner.class);
 
+    private static final String ERROR_EXCHANGE_NAME = "error.x";
+
     private static final List<MessageType> SUBSCRIBED_MESSAGE_TYPES =
             Arrays.asList(
                     MessageType.EVENT_USER_CREATED,
@@ -98,7 +100,7 @@ public class RabbitMqAutoConfigurationCommandLineRunner implements CommandLineRu
 
     private void declareErrorExchangeAndQueue()
     {
-        Exchange errorExchange = ExchangeBuilder.directExchange("error.x").durable(true).build();
+        Exchange errorExchange = ExchangeBuilder.directExchange(ERROR_EXCHANGE_NAME).durable(true).build();
 
         this.amqpAdmin.declareExchange(errorExchange);
 
@@ -127,14 +129,22 @@ public class RabbitMqAutoConfigurationCommandLineRunner implements CommandLineRu
 
         for (MessageType messageType : SUBSCRIBED_MESSAGE_TYPES)
         {
-            String  exchangeName = String.format("x.%s", messageType.toString().toLowerCase());
-            Binding binding      = new Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "", new HashMap<>());
+            String exchangeName = String.format("x.%s", messageType.toString().toLowerCase());
 
-            logger.info("Declaring binding {} => {} ...", exchangeName, queueName);
-
-            this.amqpAdmin.declareBinding(binding);
-
-            logger.info("Declared binding {} => {}.", exchangeName, queueName);
+            this.declareBinding(queueName, exchangeName, "");
         }
+
+        this.declareBinding("error." + queueName, ERROR_EXCHANGE_NAME, queueName);
+    }
+
+    private void declareBinding(String queueName, String exchangeName, String routingKey)
+    {
+        Binding binding = new Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, routingKey, new HashMap<>());
+
+        logger.info("Declaring binding {} == ({}) ==> {} ...", exchangeName, routingKey, queueName);
+
+        this.amqpAdmin.declareBinding(binding);
+
+        logger.info("Declared binding {} => {}.", exchangeName, queueName);
     }
 }

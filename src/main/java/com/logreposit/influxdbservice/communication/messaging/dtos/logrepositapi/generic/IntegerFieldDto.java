@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class IntegerFieldDto extends FieldDto
 {
-    private Integer value;
+    private Long value;
 
     public IntegerFieldDto() {
         this.setDatatype(DataType.INTEGER);

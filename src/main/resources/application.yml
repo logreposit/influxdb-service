@@ -33,5 +33,6 @@ spring:
     port: 5672
     username: guest
     password: guest
-  resources:
-    add-mappings: false
+  web:
+    resources:
+      add-mappings: false

@@ -18,56 +18,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EventDeviceCreatedMessageProcessor extends AbstractMessageProcessor<DeviceCreatedMessageDto>
-{
-    private static final Logger logger = LoggerFactory.getLogger(EventDeviceCreatedMessageProcessor.class);
+public class EventDeviceCreatedMessageProcessor
+    extends AbstractMessageProcessor<DeviceCreatedMessageDto> {
+  private static final Logger logger =
+      LoggerFactory.getLogger(EventDeviceCreatedMessageProcessor.class);
 
-    private final InfluxDBService influxDBService;
+  private final InfluxDBService influxDBService;
 
-    @Autowired
-    public EventDeviceCreatedMessageProcessor(ObjectMapper objectMapper, InfluxDBService influxDBService)
-    {
-        super(objectMapper);
+  @Autowired
+  public EventDeviceCreatedMessageProcessor(
+      ObjectMapper objectMapper, InfluxDBService influxDBService) {
+    super(objectMapper);
 
-        this.influxDBService = influxDBService;
+    this.influxDBService = influxDBService;
+  }
+
+  @Override
+  public void processMessage(Message message) throws MessagingException {
+    this.validateMessage(message);
+
+    DeviceCreatedMessageDto device = this.getMessagePayload(message, DeviceCreatedMessageDto.class);
+
+    logger.info("Retrieved created Device: {}", LoggingUtils.serialize(device));
+
+    try {
+      this.influxDBService.createDatabase(device.getId(), message.getMetaData().getUserEmail());
+
+      logger.info("Successfully created database and configured permissions.");
+    } catch (InfluxDBServiceException exception) {
+      logger.error("Caught InfluxDBServiceException while creating database", exception);
+      throw new RetryableMessagingException(
+          "Caught InfluxDBServiceException while creating database", exception);
+    }
+  }
+
+  private void validateMessage(Message message) throws NotRetryableMessagingException {
+    if (message == null || message.getMetaData() == null) {
+      logger.error("Message MetaData missing.");
+      throw new NotRetryableMessagingException("Message MetaData missing.");
     }
 
-    @Override
-    public void processMessage(Message message) throws MessagingException
-    {
-        this.validateMessage(message);
+    MessageMetaData messageMetaData = message.getMetaData();
 
-        DeviceCreatedMessageDto device = this.getMessagePayload(message, DeviceCreatedMessageDto.class);
-
-        logger.info("Retrieved created Device: {}", LoggingUtils.serialize(device));
-
-        try
-        {
-            this.influxDBService.createDatabase(device.getId(), message.getMetaData().getUserEmail());
-
-            logger.info("Successfully created database and configured permissions.");
-        }
-        catch (InfluxDBServiceException exception)
-        {
-            logger.error("Caught InfluxDBServiceException while creating database: {}", LoggingUtils.getLogForException(exception));
-            throw new RetryableMessagingException("Caught InfluxDBServiceException while creating database", exception);
-        }
+    if (StringUtils.isEmpty(messageMetaData.getUserEmail())) {
+      logger.error("metaData.userEmail missing");
+      throw new NotRetryableMessagingException("metaData.userEmail is missing.");
     }
-
-    private void validateMessage(Message message) throws NotRetryableMessagingException
-    {
-        if (message == null || message.getMetaData() == null)
-        {
-            logger.error("Message MetaData missing.");
-            throw new NotRetryableMessagingException("Message MetaData missing.");
-        }
-
-        MessageMetaData messageMetaData = message.getMetaData();
-
-        if (StringUtils.isEmpty(messageMetaData.getUserEmail()))
-        {
-            logger.error("metaData.userEmail missing");
-            throw new NotRetryableMessagingException("metaData.userEmail is missing.");
-        }
-    }
+  }
 }

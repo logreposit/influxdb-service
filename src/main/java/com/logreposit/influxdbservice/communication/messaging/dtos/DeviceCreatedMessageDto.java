@@ -7,8 +7,7 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
-public class DeviceCreatedMessageDto
-{
-    private String id;
-    private String name;
+public class DeviceCreatedMessageDto {
+  private String id;
+  private String name;
 }

@@ -7,6 +7,4 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @Configuration
 @ConfigurationProperties(value = "influxdbservice")
-public class ApplicationConfiguration
-{
-}
+public class ApplicationConfiguration {}

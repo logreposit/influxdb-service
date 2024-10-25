@@ -5,11 +5,10 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class IntegerFieldDto extends FieldDto
-{
-    private Long value;
+public class IntegerFieldDto extends FieldDto {
+  private Long value;
 
-    public IntegerFieldDto() {
-        this.setDatatype(DataType.INTEGER);
-    }
+  public IntegerFieldDto() {
+    this.setDatatype(DataType.INTEGER);
+  }
 }

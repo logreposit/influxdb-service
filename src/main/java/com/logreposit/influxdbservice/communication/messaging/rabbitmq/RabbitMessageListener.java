@@ -47,7 +47,7 @@ public class RabbitMessageListener
         }
         catch (Exception exception)
         {
-            logger.error("Caught Exception while processing Message: {}", LoggingUtils.getLogForException(exception));
+            logger.error("Caught Exception while processing Message", exception);
 
             this.messageErrorHandler.handleError(amqpMessage, exception);
         }
@@ -63,7 +63,7 @@ public class RabbitMessageListener
         }
         catch (IOException exception)
         {
-            logger.error("Unable to deserialize message payload to Message instance: {}", LoggingUtils.getLogForException(exception));
+            logger.error("Unable to deserialize message payload to Message instance", exception);
 
             throw new NotRetryableMessagingException("Unable to deserialize AMQP Message Payload to Message instance", exception);
         }

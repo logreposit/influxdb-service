@@ -58,7 +58,7 @@ public class RabbitMessageSender
         }
         catch (JsonProcessingException exception)
         {
-            logger.error("Unable to serialize Message: {}", LoggingUtils.getLogForException(exception));
+            logger.error("Unable to serialize Message", exception);
 
             throw new MessageSenderException("Unable to serialize Message", exception);
         }

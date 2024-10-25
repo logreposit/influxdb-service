@@ -1,6 +1,5 @@
 package com.logreposit.influxdbservice.services.influxdb.batchpoints.generic;
 
-import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.generic.FieldDto;
 import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.generic.IntegerFieldDto;
 import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.generic.ReadingDto;
 import com.logreposit.influxdbservice.communication.messaging.dtos.logrepositapi.generic.TagDto;
@@ -19,7 +18,7 @@ public class GenericLogdataBatchPointsFactoryTests
 
     @BeforeEach
     public void setUp() {
-        this.genericLogdataBatchPointsFactory = new GenericLogdataBatchPointsFactoryImpl();
+        this.genericLogdataBatchPointsFactory = new GenericLogdataBatchPointsFactory();
     }
 
     @Test

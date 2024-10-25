@@ -7,10 +7,9 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
-public class MessageMetaData
-{
-    private String userId;
-    private String userEmail;
-    private String deviceId;
-    private String correlationId;
+public class MessageMetaData {
+  private String userId;
+  private String userEmail;
+  private String deviceId;
+  private String correlationId;
 }

@@ -3,8 +3,7 @@ package com.logreposit.influxdbservice.communication.messaging.dtos.logrepositap
 import lombok.Data;
 
 @Data
-public class TagDto
-{
-    private String name;
-    private String value;
+public class TagDto {
+  private String name;
+  private String value;
 }

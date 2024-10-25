@@ -5,11 +5,10 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class FloatFieldDto extends FieldDto
-{
-    private Double value;
+public class FloatFieldDto extends FieldDto {
+  private Double value;
 
-    public FloatFieldDto() {
-        this.setDatatype(DataType.FLOAT);
-    }
+  public FloatFieldDto() {
+    this.setDatatype(DataType.FLOAT);
+  }
 }

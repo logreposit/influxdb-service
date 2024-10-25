@@ -15,37 +15,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EventUserCreatedMessageProcessor extends AbstractMessageProcessor<UserCreatedMessageDto>
-{
-    private static final Logger logger = LoggerFactory.getLogger(EventUserCreatedMessageProcessor.class);
+public class EventUserCreatedMessageProcessor
+    extends AbstractMessageProcessor<UserCreatedMessageDto> {
+  private static final Logger logger =
+      LoggerFactory.getLogger(EventUserCreatedMessageProcessor.class);
 
-    private final InfluxDBService influxDBService;
+  private final InfluxDBService influxDBService;
 
-    @Autowired
-    public EventUserCreatedMessageProcessor(ObjectMapper objectMapper, InfluxDBService influxDBService)
-    {
-        super(objectMapper);
+  @Autowired
+  public EventUserCreatedMessageProcessor(
+      ObjectMapper objectMapper, InfluxDBService influxDBService) {
+    super(objectMapper);
 
-        this.influxDBService = influxDBService;
+    this.influxDBService = influxDBService;
+  }
+
+  @Override
+  public void processMessage(Message message) throws MessagingException {
+    UserCreatedMessageDto user = this.getMessagePayload(message, UserCreatedMessageDto.class);
+
+    logger.info("Retrieved created User: {}", LoggingUtils.serialize(user));
+
+    try {
+      this.influxDBService.createUser(user.getEmail(), user.getPassword());
+
+      logger.info("Successfully created user.");
+    } catch (InfluxDBServiceException exception) {
+      logger.error("Caught InfluxDBServiceException while creating user", exception);
+      throw new RetryableMessagingException(
+          "Caught InfluxDBServiceException while creating user", exception);
     }
-
-    @Override
-    public void processMessage(Message message) throws MessagingException
-    {
-        UserCreatedMessageDto user = this.getMessagePayload(message, UserCreatedMessageDto.class);
-
-        logger.info("Retrieved created User: {}", LoggingUtils.serialize(user));
-
-        try
-        {
-            this.influxDBService.createUser(user.getEmail(), user.getPassword());
-
-            logger.info("Successfully created user.");
-        }
-        catch (InfluxDBServiceException exception)
-        {
-            logger.error("Caught InfluxDBServiceException while creating user", exception);
-            throw new RetryableMessagingException("Caught InfluxDBServiceException while creating user", exception);
-        }
-    }
+  }
 }

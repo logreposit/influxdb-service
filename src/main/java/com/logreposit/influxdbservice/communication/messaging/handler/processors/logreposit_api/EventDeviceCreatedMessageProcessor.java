@@ -49,7 +49,7 @@ public class EventDeviceCreatedMessageProcessor extends AbstractMessageProcessor
         }
         catch (InfluxDBServiceException exception)
         {
-            logger.error("Caught InfluxDBServiceException while creating database: {}", LoggingUtils.getLogForException(exception));
+            logger.error("Caught InfluxDBServiceException while creating database", exception);
             throw new RetryableMessagingException("Caught InfluxDBServiceException while creating database", exception);
         }
     }

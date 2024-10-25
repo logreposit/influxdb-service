@@ -1,4 +1,4 @@
-package com.logreposit.influxdbservice.communication.messaging.rabbitmq.listener;
+package com.logreposit.influxdbservice.communication.messaging.rabbitmq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logreposit.influxdbservice.communication.messaging.common.Message;
@@ -17,25 +17,24 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Service
-public class RabbitMessageListenerImpl implements RabbitMessageListener
+public class RabbitMessageListener
 {
-    private static final Logger logger = LoggerFactory.getLogger(RabbitMessageListenerImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(RabbitMessageListener.class);
 
     private final ObjectMapper        objectMapper;
     private final MessageHandler      messageHandler;
     private final MessageErrorHandler messageErrorHandler;
 
     @Autowired
-    public RabbitMessageListenerImpl(ObjectMapper objectMapper,
-                                     MessageHandler messageHandler,
-                                     MessageErrorHandler messageErrorHandler)
+    public RabbitMessageListener(ObjectMapper objectMapper,
+                                 MessageHandler messageHandler,
+                                 MessageErrorHandler messageErrorHandler)
     {
         this.objectMapper        = objectMapper;
         this.messageHandler      = messageHandler;
         this.messageErrorHandler = messageErrorHandler;
     }
 
-    @Override
     @RabbitListener(queuesToDeclare = @Queue(value = "${influxdbservice.communication.messaging.rabbit.queue}", durable = "true"))
     public void listen(org.springframework.amqp.core.Message amqpMessage)
     {
@@ -48,7 +47,7 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
         }
         catch (Exception exception)
         {
-            logger.error("Caught Exception while processing Message: {}", LoggingUtils.getLogForException(exception));
+            logger.error("Caught Exception while processing Message", exception);
 
             this.messageErrorHandler.handleError(amqpMessage, exception);
         }
@@ -64,7 +63,7 @@ public class RabbitMessageListenerImpl implements RabbitMessageListener
         }
         catch (IOException exception)
         {
-            logger.error("Unable to deserialize message payload to Message instance: {}", LoggingUtils.getLogForException(exception));
+            logger.error("Unable to deserialize message payload to Message instance", exception);
 
             throw new NotRetryableMessagingException("Unable to deserialize AMQP Message Payload to Message instance", exception);
         }

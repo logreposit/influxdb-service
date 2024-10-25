@@ -8,9 +8,4 @@ public class BatchPointsFactoryException extends LogrepositException
     {
         super(message);
     }
-
-    public BatchPointsFactoryException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
 }

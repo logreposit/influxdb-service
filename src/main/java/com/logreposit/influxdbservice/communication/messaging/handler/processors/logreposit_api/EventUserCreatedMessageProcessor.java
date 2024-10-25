@@ -44,7 +44,7 @@ public class EventUserCreatedMessageProcessor extends AbstractMessageProcessor<U
         }
         catch (InfluxDBServiceException exception)
         {
-            logger.error("Caught InfluxDBServiceException while creating user: {}", LoggingUtils.getLogForException(exception));
+            logger.error("Caught InfluxDBServiceException while creating user", exception);
             throw new RetryableMessagingException("Caught InfluxDBServiceException while creating user", exception);
         }
     }
